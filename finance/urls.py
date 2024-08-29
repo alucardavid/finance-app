@@ -7,5 +7,7 @@ from . import views
 app_name = 'finance'
 
 urlpatterns = [
-    path("", views.index, name="index")
+    path("", views.index, name="index"),
+    path("balances/", views.balances, name="balances"),
+    path("balances/<int:balance_id>/", views.balance, name="balance"),
 ]

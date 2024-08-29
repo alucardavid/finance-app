@@ -1,0 +1,31 @@
+{% extends 'finance/base.html' %}
+{% load django_jsonform %}
+{% load humanize %}
+
+{% block content %}
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Saldos</h5>
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Saldo</th>
+                            <th>Atualizado em</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for balance in balances %}
+                        <tr>
+                            <td><a href="{% url 'finance:balance' balance.id %}">{{ balance.description }}</a></td>
+                            <td>R$ {{ balance.value | intcomma }}</td>
+                            <td>{{ balance.updated_at | parse_datetime | naturaltime }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
