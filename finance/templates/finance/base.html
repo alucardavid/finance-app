@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Learning Log</title>
+    <title>Finance App</title>
 
     {% load django_bootstrap5 %}
     {% bootstrap_css %}
@@ -40,22 +40,9 @@
         </div> <!-- Closes navbar's container -->
     </nav> <!-- End of navbar -->
 
-    <main class="container">
-        <div class="pb-2 mb-2 border-bottom">
-            {% block page_header %}{% endblock page_header %}
-        </div>
+    <main class="container-fluid">
         <div>
-            {% block content %}
-            <ul class="list-group border-bottom pb-2 mb-4">
-                {% for balance in balances %}
-                  <li class="list-group-item border-0">
-                    <a href="#">{{ balance.description }}</a>
-                  </li>
-                {% empty %}
-                  <li class="list-group-item border-0">No topics have been added yet.</li>
-                {% endfor %}
-              </ul>
-            {% endblock content %}
+            {% block content %}{% endblock content %}
         </div>
     </main>
     
