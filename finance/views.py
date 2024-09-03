@@ -15,11 +15,19 @@ def balances(request):
     """Page to show all balances"""
     context = api.get_all_balances()
         
-    return render(request, 'finance/balances.html', context)
+    return render(request, 'finance/balances/balances.html', context)
 
 def balance(request, balance_id):
     """Show balance by id"""
 
     context = api.get_balance_by_id(balance_id)
 
-    return render(request, 'finance/balance.html', context)
+    return render(request, 'finance/balances/balance.html', context)
+
+def new_balance(request):
+    """Create a new balance"""
+    if request.method != "POST":
+        return render(request, 'finance/balances/new_balance.html')
+    else:
+        data = request.POST.get("amount", "")
+        return HttpResponse(data)

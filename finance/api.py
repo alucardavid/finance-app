@@ -34,3 +34,23 @@ def get_balance_by_id(balance_id):
         balance = {}
 
     return { "balance": balance}
+
+def create_balance(description, amount, show):
+    """Create a new balance"""
+
+    url = f"{host}/balances/"
+    data = {
+        'description': description,
+        'value': amount,
+        'show': show
+    }
+
+    try:
+        response = requests.post(url, json= data)
+        response_data = response.json()
+        balance =  response_data
+    except:
+        balance = {}
+
+    return { "balance": balance}
+

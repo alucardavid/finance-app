@@ -8,6 +8,8 @@
     {% load django_bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+    {% load static %}
+    <script  src="{% static 'utils.js' %}"></script>
 
 </head>
 <body>
@@ -41,9 +43,7 @@
     </nav> <!-- End of navbar -->
 
     <main class="container-fluid">
-        <div>
-            {% block content %}{% endblock content %}
-        </div>
+        {% block content %}{% endblock content %}
     </main>
     
 </body>
