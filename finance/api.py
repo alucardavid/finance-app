@@ -41,7 +41,7 @@ def create_balance(description, amount, show):
     url = f"{host}/balances/"
     data = {
         'description': description,
-        'value': amount,
+        'value': str(amount),
         'show': show
     }
 
@@ -49,7 +49,7 @@ def create_balance(description, amount, show):
         response = requests.post(url, json= data)
         response_data = response.json()
         balance =  response_data
-    except:
+    except Exception as e:
         balance = {}
 
     return { "balance": balance}

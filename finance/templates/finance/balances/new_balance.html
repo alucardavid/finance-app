@@ -6,23 +6,25 @@
     <h3>Novo Saldo</h3>
     <div class="container row">
         <div class="col-sm-12 col-xs-12 col-lg-6">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
             <form action="{% url 'finance:new_balance' %}" method="post">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="description" class="form-label">Descrição</label>
-                    <input type="text" class="form-control" id="description" name="description" required />
+                    {{ form.description }}
                 </div>
                 <div class="mb-3">
                     <label for="amount" class="form-label">Valor</label>
-                    <input type="text" class="form-control" id="amount" name="amount" onkeyup="formatAmount(event, this)" onkeydown="checkNumberKey(event, this)" required />
+                    {{ form.value }}
                 </div>
                 <div class="mb-4">
                     <label for="show" class="form-label">Mostrar</label>
-                    <select class="form-select" id="show" name="show" aria-label="show">
-                        <option selected value="S">Sim</option>
-                        <option value="N">Não</option>
-                    </select>
-                </div>
+                    {{ form.show }}    
+                </div> 
                 <button type="submit" class="btn btn-primary">Salvar</button>
             </form>
         </div>

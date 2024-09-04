@@ -1,8 +1,9 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from . import api   
+from .forms import BalanceForm
 import requests
 
 
@@ -27,7 +28,19 @@ def balance(request, balance_id):
 def new_balance(request):
     """Create a new balance"""
     if request.method != "POST":
-        return render(request, 'finance/balances/new_balance.html')
+        form = BalanceForm()
     else:
-        data = request.POST.get("amount", "")
-        return HttpResponse(data)
+        post = request.POST.copy()
+        post['value'] = post['value'].replace('.', '').replace(',', '.')
+        form = BalanceForm(data=post)
+        if form.is_valid():
+            new_balance = form.save(commit=False)
+            db_new_balance = api.create_balance(new_balance.description, new_balance.value, new_balance.show)
+            return redirect('finance:balances')
+        
+
+    context = {'form': form}
+    return render(request, 'finance/balances/new_balance.html', context)
+
+
+

@@ -27,8 +27,12 @@
                             <tr>
                                 <td><a href="{% url 'finance:balance' balance.id %}">{{ balance.description }}</a></td>
                                 <td>R$ {{ balance.value | intcomma }}</td>
-                                <td>{{ balance.updated_at | parse_datetime | naturaltime }}</td>
-                                <!-- <td><a class="btn btn-danger"></a></td> -->
+                                {% if balance.updated_at != null %}
+                                    <td>{{ balance.updated_at | parse_datetime | naturaltime }}</td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                                
                             </tr>
                         {% endfor %}
                         </tbody>

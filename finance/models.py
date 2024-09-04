@@ -1,6 +1,6 @@
 from django.db import models
 
-class Balances(models.Model):
+class Balance(models.Model):
     id = models.BigAutoField(primary_key=True)
     description = models.CharField(max_length=50)
     value = models.DecimalField(max_digits=15, decimal_places=2)
