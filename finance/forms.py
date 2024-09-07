@@ -1,5 +1,6 @@
-from django.forms import TextInput, ModelForm, ChoiceField, Select
-from .models import Balance
+from django.forms import TextInput, ModelForm, ChoiceField, Select, ModelChoiceField, DateInput
+from .models import Balance, VariableExpense
+from . import api   
 
 class BalanceForm(ModelForm):
     class Meta:
@@ -13,4 +14,21 @@ class BalanceForm(ModelForm):
             'value': TextInput(attrs={'class': 'form-control', 'onkeydown': 'checkNumberKey(event, this)'}),
             'show': Select(attrs={'class': 'form-control'}, choices=(("S", "Sim"), ("N", "No"))),
         }
-        
+    
+class VariableExpenseForm(ModelForm):
+    class Meta:
+        model = VariableExpense
+        fields = ['place', 'description', 'date', 'amount', 'type', 'form_of_payment']
+        widgets = {
+            'place': TextInput(attrs={'class': 'form-control'}),
+            'description': TextInput(attrs={'class': 'form-control'}),
+            'form_of_payment': Select(attrs={'class': 'form-control'}),
+            'type': Select(attrs={'class': 'form-control'}, choices=(("", "Selecione"),("Despesa", "Despesa"), ("Receita", "Receita"))),
+            'amount': TextInput(attrs={'class': 'form-control', 'onkeydown': 'checkNumberKey(event, this)'}),
+            'date': DateInput(attrs={'class': 'form-control', 'type': 'date'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['form_of_payment'].choices =[["", "Selecione"]] + api.get_all_form_of_payments(order_by="form_of_payments.description asc")["form_of_payments"]
