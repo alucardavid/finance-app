@@ -3,11 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Learning Log</title>
+    <title>Finance App</title>
 
     {% load django_bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+    {% load static %}
+    <script  src="{% static 'utils.js' %}"></script>
 
 </head>
 <body>
@@ -22,8 +24,8 @@
             </button>
              <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Balances</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'finance:balances' %}">Saldos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'finance:variable_expenses' %}">Despesa Variavel</a></li>
                 </ul> <!-- End of links on left side of navbar -->
                 <!-- Account-related links -->
                 <ul class="navbar-nav ms-auto mb-2 mb-md-0">    
@@ -40,23 +42,8 @@
         </div> <!-- Closes navbar's container -->
     </nav> <!-- End of navbar -->
 
-    <main class="container">
-        <div class="pb-2 mb-2 border-bottom">
-            {% block page_header %}{% endblock page_header %}
-        </div>
-        <div>
-            {% block content %}
-            <ul class="list-group border-bottom pb-2 mb-4">
-                {% for balance in balances %}
-                  <li class="list-group-item border-0">
-                    <a href="#">{{ balance.description }}</a>
-                  </li>
-                {% empty %}
-                  <li class="list-group-item border-0">No topics have been added yet.</li>
-                {% endfor %}
-              </ul>
-            {% endblock content %}
-        </div>
+    <main class="container-fluid">
+        {% block content %}{% endblock content %}
     </main>
     
 </body>

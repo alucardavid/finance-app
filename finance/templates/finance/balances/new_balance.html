@@ -1,0 +1,32 @@
+{% extends 'finance/base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+    <h3>Novo Saldo</h3>
+    <div class="container row">
+        <div class="col-sm-12 col-xs-12 col-lg-6">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+            <form action="{% url 'finance:new_balance' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="description" class="form-label">Descrição</label>
+                    {{ form.description }}
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Valor</label>
+                    {{ form.value }}
+                </div>
+                <div class="mb-4">
+                    <label for="show" class="form-label">Mostrar</label>
+                    {{ form.show }}    
+                </div> 
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

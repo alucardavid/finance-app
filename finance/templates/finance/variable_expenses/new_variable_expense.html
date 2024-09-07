@@ -1,0 +1,44 @@
+{% extends 'finance/base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+    <h3>Nova Despesa Variavel</h3>
+    <div class="container row">
+        <div class="col-sm-12 col-xs-12 col-lg-6">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+            <form action="{% url 'finance:new_variable_expense' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="description" class="form-label">Data</label>
+                    {{ form.date }}
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Local</label>
+                    {{ form.place }}
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Descrição</label>
+                    {{ form.description }}
+                </div>
+                <div class="mb-3">
+                    <label for="show" class="form-label">Forma de Pagamento</label>
+                    {{ form.form_of_payment }}    
+                </div> 
+                <div class="mb-3">
+                    <label for="show" class="form-label">Tipo</label>
+                    {{ form.type }}    
+                </div>
+                <div class="mb-4">
+                    <label for="amount" class="form-label">Valor</label>
+                    {{ form.amount }}
+                </div> 
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
