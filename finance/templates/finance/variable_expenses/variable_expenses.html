@@ -30,7 +30,7 @@
                             <tr>
                                 <td>{{ expense.date | parse_datetime | naturalday}}</td>
                                 <td>{{ expense.place }}</td>
-                                <td><a href="#">{{ expense.description }}</a></td>
+                                <td><a href="{% url 'finance:edit_variable_expense' expense.id %}">{{ expense.description }}</a></td>
                                 <td>{{ expense.form_of_payments.description }}</td>
                                 <td>{{ expense.type }}</td>
                                 <td>R$ {{ expense.amount | intcomma }}</td>

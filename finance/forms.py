@@ -24,7 +24,7 @@ class VariableExpenseForm(ModelForm):
             'description': TextInput(attrs={'class': 'form-control'}),
             'form_of_payment': Select(attrs={'class': 'form-control'}),
             'type': Select(attrs={'class': 'form-control'}, choices=(("", "Selecione"),("Despesa", "Despesa"), ("Receita", "Receita"))),
-            'amount': TextInput(attrs={'class': 'form-control', 'onkeydown': 'checkNumberKey(event, this)'}),
+            'amount': TextInput(attrs={'class': 'form-control', 'onkeydown': 'checkNumberKey(event, this)', 'onload': 'console.log("onload")'}),
             'date': DateInput(attrs={'class': 'form-control', 'type': 'date'})
         }
 

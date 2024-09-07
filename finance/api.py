@@ -114,3 +114,17 @@ def create_variable_expense(new_variable_expense):
 
     return { "variable_expense": db_variable_expense}
 
+
+def get_variable_expense_by_id(variable_expense_id):
+    """Get a variable expense by id"""
+    url = f"{host}/variable-expenses/{variable_expense_id}"
+    
+    try:
+        response = requests.get(url)
+        data = response.json()
+        variable_expense =  data
+    except:
+        variable_expense = {}
+
+    return { "variable_expense": variable_expense}
+
