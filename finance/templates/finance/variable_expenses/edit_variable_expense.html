@@ -1,8 +1,16 @@
 {% extends 'finance/base.html' %}
-
 {% load humanize %}
 
+{% block head %}
+{% load static %}
+    <script  src="{% static 'js/utils.js' %}"></script>
+    <script  src="{% static 'js/edit-variable-expense.js' %}"></script>
+{% endblock head %}
+
 {% block content %}
+    {% load static %}
+    <script  src="{% static 'js/utils.js' %}"></script>
+
     <h3>Editar Despesa Variavel</h3>
     <div class="container row">
         <div class="col-sm-12 col-xs-12 col-lg-6">
@@ -11,7 +19,7 @@
                     {{ form.errors }}
                 </div>
             {% endif %}
-            <form action="{% url 'finance:new_variable_expense' %}" method="post">
+            <form action="{% url 'finance:edit_variable_expense' expense.id%}" method="post">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="description" class="form-label">Data</label>

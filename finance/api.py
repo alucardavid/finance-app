@@ -100,16 +100,11 @@ def create_variable_expense(new_variable_expense):
         'form_of_payment_id': new_variable_expense.form_of_payment.id
     }
 
-    print(data, file=sys.stderr)
-
     try:
         response = requests.post(url, json= data)
         response_data = response.json()
         db_variable_expense =  response_data
-        print(db_variable_expense, file=sys.stderr)
-
     except Exception as e:
-        print(e, file=sys.stderr)
         db_variable_expense = {}
 
     return { "variable_expense": db_variable_expense}
@@ -127,4 +122,27 @@ def get_variable_expense_by_id(variable_expense_id):
         variable_expense = {}
 
     return { "variable_expense": variable_expense}
+
+
+def update_variable_expense(new_variable_expense, expense_id):
+    """Update a variable expense"""
+
+    url = f"{host}/variable-expenses/{expense_id}"
+    data = {
+        'description': new_variable_expense.description,
+        'place': new_variable_expense.place,
+        'date': new_variable_expense.date.strftime("%Y-%m-%d"),
+        'amount': str(new_variable_expense.amount),
+        'type': new_variable_expense.type,
+        'form_of_payment_id': new_variable_expense.form_of_payment.id
+    }
+
+    try:
+        response = requests.put(url, json= data)
+        response_data = response.json()
+        db_variable_expense =  response_data
+    except Exception as e:
+        db_variable_expense = {}
+
+    return { "variable_expense": db_variable_expense}
 

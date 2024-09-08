@@ -1,6 +1,12 @@
 {% extends 'finance/base.html' %}
-
 {% load humanize %}
+
+{% block head %}
+{% load static %}
+    <script  src="{% static 'js/utils.js' %}"></script>
+    <script  src="{% static 'js/edit-variable-expense.js' %}"></script>
+{% endblock head %}
+
 
 {% block content %}
     <h3>Nova Despesa Variavel</h3>

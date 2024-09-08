@@ -82,10 +82,10 @@ def edit_variable_expense(request, variable_expense_id):
         form = VariableExpenseForm(data=post)
         if form.is_valid():
             new_variable_expense = form.save(commit=False)
-            db_new_variable_expense = api.create_variable_expense(new_variable_expense)
+            db_new_variable_expense = api.update_variable_expense(new_variable_expense, variable_expense_id)
             return redirect('finance:variable_expenses')
 
-    context = {'form': form}
+    context = {'form': form, 'expense': variable_expense}
     return render(request, 'finance/variable_expenses/edit_variable_expense.html', context)
 
 
