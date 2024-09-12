@@ -1,14 +1,14 @@
-function deleteExpenses(event, target){
+function deleteBalances(event, target){
     let expensesSelected = document.querySelectorAll('input[type="checkbox"]:checked')
     let promises = []
 
     expensesSelected.forEach((element) => {
-        promises.push(fetch(`http://localhost:8001/variable-expenses/${element.id}/`, { method: 'DELETE'}).then(res => res.json()))
+        promises.push(fetch(`http://localhost:8001/balances/${element.id}/`, { method: 'DELETE'}).then())
     })
 
     if (promises.length > 0) {
         Promise.all(promises)
-            .then(body => {
+            .then(data => {
                 window.location.reload()
             })
     }

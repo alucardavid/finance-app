@@ -3,9 +3,7 @@ import sys
 import requests
 from datetime import datetime
 
-
 host = "http://127.0.0.1:8001"
-
 
 def get_all_balances():
     """Get all balances"""
@@ -55,6 +53,25 @@ def create_balance(description, amount, show):
         balance = {}
 
     return { "balance": balance}
+
+def update_balance(new_balance, balance_id):    
+    """Update a balance"""
+
+    url = f"{host}/balances/{balance_id}"
+    data = {
+        'value': str(new_balance.value),
+        'show': new_balance.show,
+        'description': new_balance.description
+    }
+
+    try:
+        response = requests.put(url, json= data)
+        response_data = response.json()
+        db_balance =  response_data
+    except Exception as e:
+        db_balance = {}
+
+    return { "balance": db_balance}
 
 def get_all_variable_expenses(limit: int = 15, order_by: str = "variable_expenses.id desc"):
     """Get all variable expenses"""
@@ -109,7 +126,6 @@ def create_variable_expense(new_variable_expense):
 
     return { "variable_expense": db_variable_expense}
 
-
 def get_variable_expense_by_id(variable_expense_id):
     """Get a variable expense by id"""
     url = f"{host}/variable-expenses/{variable_expense_id}"
@@ -122,7 +138,6 @@ def get_variable_expense_by_id(variable_expense_id):
         variable_expense = {}
 
     return { "variable_expense": variable_expense}
-
 
 def update_variable_expense(new_variable_expense, expense_id):
     """Update a variable expense"""

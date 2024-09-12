@@ -8,9 +8,6 @@ from .forms import BalanceForm, VariableExpenseForm
 import requests
 import sys, datetime
 
-
-
-
 def index(request):
     """The home page for Finance App"""
         
@@ -22,12 +19,23 @@ def balances(request):
         
     return render(request, 'finance/balances/balances.html', context)
 
-def balance(request, balance_id):
-    """Show balance by id"""
+def edit_balance(request, balance_id):
+    """Edit a balance """
+    if request.method != "POST":
+        balance = api.get_balance_by_id(balance_id)["balance"]
+        form = BalanceForm(data=balance)
+    else:
+        post = request.POST.copy()
+        post['value'] = post['value'].replace('.', '').replace(',', '.')
+        form = BalanceForm(data=post)
+        if form.is_valid():
+            new_balance = form.save(commit=False)
+            db_new_balance = api.update_balance(new_balance, balance_id)
+            return redirect('finance:balances')
 
-    context = api.get_balance_by_id(balance_id)
+    context = {'form': form, 'balance': balance}
 
-    return render(request, 'finance/balances/balance.html', context)
+    return render(request, 'finance/balances/edit_balance.html', context)
 
 def new_balance(request):
     """Create a new balance"""
