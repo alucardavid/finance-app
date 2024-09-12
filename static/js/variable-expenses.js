@@ -3,7 +3,7 @@ function deleteExpenses(event, target){
     let promises = []
 
     expensesSelected.forEach((element) => {
-        promises.push(fetch(`http://localhost:7000/variable-expenses/${element.id}/`, { method: 'DELETE'}).then(res => res.json()))
+        promises.push(fetch(`http://localhost:8001/variable-expenses/${element.id}/`, { method: 'DELETE'}).then(res => res.json()))
     })
 
     Promise.all(promises)
