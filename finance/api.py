@@ -161,3 +161,17 @@ def update_variable_expense(new_variable_expense, expense_id):
 
     return { "variable_expense": db_variable_expense}
 
+def get_all_monthly_expenses(page:int = 1, limit: int = 10, order_by: str = "monthly_expenses.id desc"):
+    """Get all monthly expenses"""
+    url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}"
+
+    try:
+        response = requests.get(url)
+        data = response.json()
+        expenses = data 
+    
+    except Exception as e:
+        expenses = []
+
+    return { 'monthly_expenses': expenses}
+    

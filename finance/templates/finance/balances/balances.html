@@ -26,6 +26,7 @@
                                 <th></th>
                                 <th>Descrição</th>
                                 <th>Saldo</th>
+                                <th>Criado em</th>
                                 <th>Atualizado em</th>
                                 <th></th>
                             </tr>
@@ -40,6 +41,7 @@
                                 </td>
                                 <td><a href="{% url 'finance:edit_balance' balance.id %}">{{ balance.description }}</a></td>
                                 <td>R$ {{ balance.value | intcomma }}</td>
+                                <td>{{ balance.created_at | parse_datetime | naturaltime }}</td>
                                 {% if balance.updated_at != null %}
                                     <td>{{ balance.updated_at | parse_datetime | naturaltime }}</td>
                                 {% else %}

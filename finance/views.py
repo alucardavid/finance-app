@@ -96,4 +96,9 @@ def edit_variable_expense(request, variable_expense_id):
     context = {'form': form, 'expense': variable_expense}
     return render(request, 'finance/variable_expenses/edit_variable_expense.html', context)
 
+def monthly_expenses(request):
+    """Get all monthly expenses"""
+    context = api.get_all_monthly_expenses()
+    
+    return render(request, 'finance/monthly_expenses/monthly_expenses.html', context)
 

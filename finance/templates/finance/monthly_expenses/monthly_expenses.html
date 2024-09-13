@@ -1,0 +1,101 @@
+{% extends 'finance/base.html' %}
+{% load django_jsonform %}
+{% load humanize %}
+
+{% block head %}
+{% load static %}
+    
+{% endblock head %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-12" style="height: 50px;">
+            <a class="btn btn-primary" href="#" role="button">Novo</a>
+            <button type="button" class="btn btn-danger" onclick="deleteExpenses(event, this)">Excluir</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-xs-12 col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-10">Despesas Mensal</h5>
+                    <div class="row">
+                        <div class="col-sm- col-xs-2 col-lg-2 mt-3">
+                            <label for="page">Password:</label>
+                            <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;"  id="page">
+                                <option>15</option>
+                                <option>50</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12 col-lg-12">
+                            <table class="table table-hover table-sm mt-3">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Data</th>
+                                        <th>Local</th>
+                                        <th>Descrição</th>
+                                        <th>Forma de Pagamento</th>
+                                        <th>Valor</th>
+                                        <th>Qtd Parcelas</th>
+                                        <th>Parcela Atual</th>
+                                        <th>Vencimento</th>
+                                        <th>Status</th>
+                                        <th>Atualizado em</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for expense in monthly_expenses.items %}
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <input class="form-check-input" type="checkbox" id="{{ expense.id }}" value="" aria-label="...">
+                                            </div>
+                                        </td>
+                                        <td>{{ expense.date | parse_datetime | naturalday}}</td>
+                                        <td>{{ expense.place }}</td>
+                                        <td><a href="#">{{ expense.description }}</a></td>
+                                        <td>{{ expense.form_of_payments.description }}</td>
+                                        <td>R$ {{ expense.amount | intcomma }}</td>
+                                        <td>{{ expense.total_plots }}</td>
+                                        <td>{{ expense.current_plot }}</td>
+                                        <td>{{ expense.due_date | parse_datetime | naturalday }}</td>
+                                        <td>{{ expense.status }}</td>
+                                        {% if expense.updated_at != null %}
+                                            <td>{{ expense.updated_at | parse_datetime | naturaltime }}</td>
+                                        {% else %}
+                                            <td></td>
+                                        {% endif %}
+                                        
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                  <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                      <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                  </li>
+                                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                  <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                      <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </nav>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
