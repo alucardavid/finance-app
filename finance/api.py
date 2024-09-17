@@ -173,5 +173,5 @@ def get_all_monthly_expenses(page:int = 1, limit: int = 10, order_by: str = "mon
     except Exception as e:
         expenses = []
 
-    return { 'monthly_expenses': expenses}
+    return expenses
     

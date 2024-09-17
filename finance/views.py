@@ -98,7 +98,22 @@ def edit_variable_expense(request, variable_expense_id):
 
 def monthly_expenses(request):
     """Get all monthly expenses"""
-    context = api.get_all_monthly_expenses()
-    
+    page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
+    pages = []
+    monthly_expenses = api.get_all_monthly_expenses(page)
+
+    print()
+
+    for i in range(page if page < (int(monthly_expenses["total_pages"])-4) else (int(monthly_expenses["total_pages"])-4), (page + 5) if page < (int(monthly_expenses["total_pages"])-4) else (int(monthly_expenses["total_pages"])+1)):
+        pages.append(i)
+
+    context = { 
+        'monthly_expenses': monthly_expenses,
+        'page': page,
+        'pages': pages,
+        'prev_page': page - 1,
+        'next_page': page + 1,
+        'last_page': monthly_expenses["total_pages"]
+    }
     return render(request, 'finance/monthly_expenses/monthly_expenses.html', context)
 

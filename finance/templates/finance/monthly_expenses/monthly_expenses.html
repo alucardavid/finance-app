@@ -22,13 +22,14 @@
                     <h5 class="card-title mb-10">Despesas Mensal</h5>
                     <div class="row">
                         <div class="col-sm- col-xs-2 col-lg-2 mt-3">
-                            <label for="page">Password:</label>
                             <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;"  id="page">
                                 <option>15</option>
                                 <option>50</option>
                             </select>
+                            <label for="page"> items por pagina</label>
                         </div>
                     </div>
+                    <!-- Row to table -->
                     <div class="row">
                         <div class="col-sm-12 col-xs-12 col-lg-12">
                             <table class="table table-hover table-sm mt-3">
@@ -74,26 +75,50 @@
                                 {% endfor %}
                                 </tbody>
                             </table>
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination">
-                                  <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                      <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                  </li>
-                                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                  <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                      <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                  </li>
-                                </ul>
-                              </nav>
-
                         </div>
                     </div>
+                    <!-- End of line to table -->
+
+                    <!-- Row to pagination -->
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-6 col-lg-6">
+                            <span>Monstrando {{ monthly_expenses.limit }} de {{ monthly_expenses.count | intcomma }}</span>
+                        </div>
+                        <div class="col-sm-6 col-xs-6 col-lg-6">
+                            <nav aria-label="pagination" class="float-end">
+                                <ul class="pagination">
+                                    {% if page != 1 %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{% url 'finance:monthly_expenses' %}?page=1" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="{% url 'finance:monthly_expenses' %}?page={{ prev_page }}" aria-label="Previous">
+                                            <span aria-hidden="true">&lsaquo;</span>
+                                            </a>
+                                        </li>
+                                    {%  endif%}
+                                    {% for npage in pages %}
+                                        <li class="page-item"><a class="page-link" href="{% url 'finance:monthly_expenses' %}?page={{ npage }}">{{ npage }}</a></li>
+                                    {% endfor %}
+                                    {% if page != last_page %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{% url 'finance:monthly_expenses' %}?page={{ next_page }}" aria-label="Next">
+                                                <span aria-hidden="true">&rsaquo;</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="{% url 'finance:monthly_expenses' %}?page={{ last_page }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                              </nav>
+                        </div>
+                    </div>
+                    <!-- End line to pagination -->
                 </div>
             </div>
         </div>
