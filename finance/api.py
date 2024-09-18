@@ -3,7 +3,7 @@ import sys
 import requests
 from datetime import datetime
 
-host = "http://localhost:8001"
+host = "http://localhost:7000"
 
 def get_all_balances():
     """Get all balances"""
@@ -160,9 +160,13 @@ def update_variable_expense(new_variable_expense, expense_id):
 
     return { "variable_expense": db_variable_expense}
 
-def get_all_monthly_expenses(page:int = 1, limit: int = 10, order_by: str = "monthly_expenses.id desc"):
+def get_all_monthly_expenses(page:int = 1, limit: int = 10, order_by: str = "monthly_expenses.id desc", due_date: str = None):
     """Get all monthly expenses"""
-    url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}"
+
+    if due_date is None:
+        url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}"
+    else:
+        url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}&due_date={due_date}"
 
     try:
         response = requests.get(url)

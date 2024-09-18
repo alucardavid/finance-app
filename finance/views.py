@@ -100,11 +100,19 @@ def monthly_expenses(request):
     """Get all monthly expenses"""
     page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
     limit = int(request.GET.get('limit') if request.GET.get('limit') is not None else 10)
+    due_date = request.GET.get('due_date')
+    order_by = "monthly_expenses.id desc" if due_date is None else "monthly_expenses.form_of_payment_id, monthly_expenses.description asc"
+    monthly_expenses = api.get_all_monthly_expenses(page, limit, order_by, due_date)
+    last_page = monthly_expenses["total_pages"]
+    total_items = monthly_expenses["count"]
     pages = []
-    monthly_expenses = api.get_all_monthly_expenses(page, limit)
 
-    for i in range(1 if page <=5 else page - 4, 6 if page <= 5 else (page + 1)):
-        pages.append(i)
+    if last_page <= 5:
+        for i in range(1, last_page+1):
+            pages.append(i)
+    else:
+        for i in range(1 if page <=5 else page - 4, 6 if page <= 5 else (page + 1)):
+            pages.append(i)
 
     context = { 
         'monthly_expenses': monthly_expenses,
@@ -112,8 +120,9 @@ def monthly_expenses(request):
         'pages': pages,
         'prev_page': page - 1,
         'next_page': page + 1,
-        'last_page': monthly_expenses["total_pages"],
-        'showing': f"{(page * limit) - (limit - 1)} a {page * limit} de {format(monthly_expenses["count"], ',d').replace(",", ".")}"
+        'last_page': last_page,
+        'showing': f"{(page * limit) - (limit - 1)} a {(page * limit) if (page * limit) <= total_items else total_items } de {format(monthly_expenses["count"], ',d').replace(",", ".")}",
+        'due_date': due_date
     }
     return render(request, 'finance/monthly_expenses/monthly_expenses.html', context)
 

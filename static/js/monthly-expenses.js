@@ -1,19 +1,3 @@
-function updateLimit(event, target){
-    let url = window.location.href.split("?")
-    let finalUrl = `${url[0]}?limit=${target.value}`
-    
-    if (url.length > 1) {
-        queryStrings = url[1].split("&")
-        queryStrings.forEach(item => {
-            if (item.split("=")[0] == "page") {
-                finalUrl += `&page=${item.split("=")[1]}`
-            }
-        });
-    }
-
-    window.location.assign(finalUrl) 
-}
-
 function deleteExpenses(event, target){
     let expensesSelected = document.querySelectorAll('input[type="checkbox"]:checked')
     let promises = []
@@ -28,4 +12,17 @@ function deleteExpenses(event, target){
                 window.location.reload()
             })
     }
+}
+
+
+function updateQueryParameters(){
+    let url = window.location.href.split("?")
+    limit = document.getElementById('limit')
+    page = document.querySelector('li.active a')
+    due_date = document.getElementById('year_month')
+    queryParameters = `?limit=${limit.value}&page=${page.innerHTML}`
+    
+    queryParameters += (due_date.value != '' ? `&due_date=${due_date.value}` : '')
+
+    window.location.assign(url[0] + queryParameters)
 }

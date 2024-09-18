@@ -20,19 +20,19 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title mb-10">Despesas Mensal</h5>
-                    <div class="row">
-                        <div class="col-sm-3 col-xs-3 col-lg-2 mt-2">
-                            <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;" onchange="updateLimit(event, this)"  id="limit">
+                    <div class="row mt-3 mb-3">
+                        <div class="col-sm-3 col-xs-3 col-lg-2">
+                            <label for="page"> items por pagina</label>
+                            <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;" onchange="updateQueryParameters()"  id="limit">
                                 <option {% if monthly_expenses.limit == 10 %} selected {% endif %} >10</option>
                                 <option {% if monthly_expenses.limit == 25 %} selected {% endif %} >25</option>
                                 <option {% if monthly_expenses.limit == 50 %} selected {% endif %} >50</option>
                                 <option {% if monthly_expenses.limit == 100 %} selected {% endif %} >100</option>
                             </select>
-                            <label for="page"> items por pagina</label>
                         </div>
-                        <div class="col-sm-3 col-xs-3 col-lg-2 mt-2">
+                        <div class="col-sm-3 col-xs-3 col-lg-3">
                             <label for="year_month">Vencimento - </label>
-                            <input type="month" class="form-control" id="year_month" style="width: auto; display: inline-block;"/>
+                            <input type="month" class="form-control form-control-sm" id="year_month" style="width: auto; display: inline-block;" onchange="updateQueryParameters()" value="{{ due_date }}"/>
                         </div>
                     </div>
                     <!-- Row to table -->
@@ -94,30 +94,30 @@
                             <nav aria-label="pagination" class="float-end">
                                 <ul class="pagination">
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page=1" aria-label="First">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page=1{% if due_date != None %}&due_date={{due_date}}{% endif %}" aria-label="First">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ prev_page }}" aria-label="Previous">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ prev_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}" aria-label="Previous">
                                         <span aria-hidden="true">&lsaquo;</span>
                                         </a>
                                     </li>
                                     {% for npage in pages %}
-                                        <li class="page-item {% if npage == page %}active{% endif %} "><a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ npage }}">{{ npage }}</a></li>
+                                        <li class="page-item {% if npage == page %}active{% endif %} ">
+                                            <a class="page-link" 
+                                               href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ npage }}{% if due_date != None %}&due_date={{due_date}}{% endif %}">{{ npage }}</a></li>
                                     {% endfor %}
-                                    
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ next_page }}" aria-label="Next">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ next_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}" aria-label="Next">
                                             <span aria-hidden="true">&rsaquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ last_page }}" aria-label="Last">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ last_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}" aria-label="Last">
                                         <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
-                                    
                                 </ul>
                               </nav>
                         </div>
