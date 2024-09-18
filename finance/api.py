@@ -3,7 +3,7 @@ import sys
 import requests
 from datetime import datetime
 
-host = "http://localhost:7000"
+host = "http://localhost:8001"
 
 def get_all_balances():
     """Get all balances"""

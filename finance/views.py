@@ -101,7 +101,7 @@ def monthly_expenses(request):
     page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
     limit = int(request.GET.get('limit') if request.GET.get('limit') is not None else 10)
     due_date = request.GET.get('due_date')
-    order_by = "monthly_expenses.id desc" if due_date is None else "monthly_expenses.form_of_payment_id, monthly_expenses.description asc"
+    order_by = "monthly_expenses.id desc" if due_date is None else "monthly_expenses.form_of_payment_id, monthly_expenses.place, monthly_expenses.description asc"
     monthly_expenses = api.get_all_monthly_expenses(page, limit, order_by, due_date)
     last_page = monthly_expenses["total_pages"]
     total_items = monthly_expenses["count"]
