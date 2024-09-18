@@ -21,7 +21,7 @@
                 <div class="card-body">
                     <h5 class="card-title mb-10">Despesas Mensal</h5>
                     <div class="row">
-                        <div class="col-sm- col-xs-2 col-lg-2 mt-3">
+                        <div class="col-sm-3 col-xs-3 col-lg-2 mt-2">
                             <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;" onchange="updateLimit(event, this)"  id="limit">
                                 <option {% if monthly_expenses.limit == 10 %} selected {% endif %} >10</option>
                                 <option {% if monthly_expenses.limit == 25 %} selected {% endif %} >25</option>
@@ -29,6 +29,10 @@
                                 <option {% if monthly_expenses.limit == 100 %} selected {% endif %} >100</option>
                             </select>
                             <label for="page"> items por pagina</label>
+                        </div>
+                        <div class="col-sm-3 col-xs-3 col-lg-2 mt-2">
+                            <label for="year_month">Vencimento - </label>
+                            <input type="month" class="form-control" id="year_month" style="width: auto; display: inline-block;"/>
                         </div>
                     </div>
                     <!-- Row to table -->
@@ -60,7 +64,7 @@
                                         </td>
                                         <td>{{ expense.date | parse_datetime | naturalday}}</td>
                                         <td>{{ expense.place }}</td>
-                                        <td><a href="#">{{ expense.description }}</a></td>
+                                        <td><a href="{% url 'finance:edit_monthly_expense' expense.id %}">{{ expense.description }}</a></td>
                                         <td>{{ expense.form_of_payments.description }}</td>
                                         <td>R$ {{ expense.amount | intcomma }}</td>
                                         <td>{{ expense.total_plots }}</td>

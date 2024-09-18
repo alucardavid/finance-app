@@ -1,0 +1,1 @@
+const HOST_API = 'http://localhost:8001'

@@ -3,7 +3,7 @@ import sys
 import requests
 from datetime import datetime
 
-host = "http://127.0.0.1:8001"
+host = "http://localhost:8001"
 
 def get_all_balances():
     """Get all balances"""
@@ -106,7 +106,6 @@ def get_all_form_of_payments(show: str = "S", limit: int = 15, order_by: str = "
 
 def create_variable_expense(new_variable_expense):
     """Create a new variable expense"""
-    
     url = f"{host}/variable-expenses/"
     data = {
         'description': new_variable_expense.description,
@@ -175,3 +174,63 @@ def get_all_monthly_expenses(page:int = 1, limit: int = 10, order_by: str = "mon
 
     return expenses
     
+def create_monthly_expense(new_expense):
+    """Create a new monthly expense"""
+    url = f"{host}/monthly-expenses/"
+    data = {
+        'place': new_expense.place,
+        'description': new_expense.description,
+        'date': new_expense.date.strftime("%Y-%m-%d"),
+        'due_date': new_expense.due_date.strftime("%Y-%m-%d"),
+        'amount': str(new_expense.amount),
+        'total_plots': new_expense.total_plots,
+        'current_plot': new_expense.current_plot,
+        'form_of_payment_id': new_expense.form_of_payment.id,
+        'expense_category_id': 1
+    }
+
+    try:
+        response =  requests.post(url, json= data)
+        response_data = response.json()
+        db_expense = response_data
+    except Exception as e:
+        db_expense = {}
+
+    return { 'monthly_expense': db_expense}
+
+def get_monthly_expense_by_id(expense_id):
+    """Get a monthly expense by id"""
+    url = f"{host}/monthly-expenses/{expense_id}"
+    
+    try:
+        response = requests.get(url)
+        data = response.json()
+        expense =  data
+    except:
+        expense = {}
+
+    return { "monthly_expense": expense}
+
+def update_monthly_expense(new_expense, expense_id):
+    """Update a monthly expense"""
+    url = f"{host}/monthly-expenses/{expense_id}"
+    data = {
+        'place': new_expense.place,
+        'description': new_expense.description,
+        'date': new_expense.date.strftime("%Y-%m-%d"),
+        'due_date': new_expense.due_date.strftime("%Y-%m-%d"),
+        'amount': str(new_expense.amount),
+        'total_plots': new_expense.total_plots,
+        'current_plot': new_expense.current_plot,
+        'form_of_payment_id': new_expense.form_of_payment.id,
+        'expense_category_id': 1
+    }
+
+    try:
+        response = requests.put(url, json= data)
+        response_data = response.json()
+        db_expense =  response_data
+    except Exception as e:
+        db_expense = {}
+
+    return { "monthly_expense": db_expense}

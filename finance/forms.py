@@ -30,18 +30,24 @@ class VariableExpenseForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.fields['form_of_payment'].choices =[["", "Selecione"]] + api.get_all_form_of_payments(order_by="form_of_payments.description asc")["form_of_payments"]
 
 class MonthlyExpenseForm(ModelForm):
     class Meta:
         model = MonthlyExpense
-        fields = ['date', 'place', 'description', 'form_of_payment', 'amount', 'total_plots', 'current_plot', 'due_date']
+        fields = ['date', 'place', 'description', 'form_of_payment', 'amount', 'total_plots', 'current_plot', 'due_date', 'status']
         widgets = {
             'place': TextInput(attrs={'class': 'form-control'}),
             'description': TextInput(attrs={'class': 'form-control'}),
             'form_of_payment': Select(attrs={'class': 'form-control'}),
             'amount': TextInput(attrs={'class': 'form-control', 'onkeydown': 'checkNumberKey(event, this)', 'onload': 'console.log("onload")'}),
             'date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'total_plots': NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            'total_plots': NumberInput(attrs={'class': 'form-control', 'min': 1, 'step': 1, 'pattern': '[1-9]', 'value': 1}),
+            'current_plot': NumberInput(attrs={'class': 'form-control', 'min': 1, 'step': 1, 'pattern': '[1-9]', 'value': 1}),
+            'due_date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'status': Select(attrs={'class': 'form-control'}, choices=(("", "Selecione"),("Pago", "Pago"), ("Pendente", "Pendente"))),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['form_of_payment'].choices =[["", "Selecione"]] + api.get_all_form_of_payments(order_by="form_of_payments.description asc")["form_of_payments"]

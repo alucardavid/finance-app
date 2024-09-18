@@ -3,7 +3,7 @@ function deleteBalances(event, target){
     let promises = []
 
     expensesSelected.forEach((element) => {
-        promises.push(fetch(`http://localhost:8001/balances/${element.id}/`, { method: 'DELETE'}).then())
+        promises.push(fetch(`${HOST_API}/balances/${element.id}/`, { method: 'DELETE'}).then())
     })
 
     if (promises.length > 0) {

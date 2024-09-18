@@ -121,6 +121,35 @@ def new_monthly_expense(request):
     """Create a new monthly expense"""
     if request.method != "POST":
         form = MonthlyExpenseForm()
+    else:
+        post = request.POST.copy()
+        post['amount'] = post['amount'].replace('.', '').replace(',', '.')
+        form = MonthlyExpenseForm(data=post)
+        if form.is_valid():
+            new_monthly_expense = form.save(commit=False)
+            db_new_monthly_expense = api.create_monthly_expense(new_monthly_expense)
+            return redirect('finance:monthly_expenses')
 
+    
     context = {'form': form}
     return render(request, 'finance/monthly_expenses/new_monthly_expense.html', context)
+
+def edit_monthly_expense(request, monthly_expense_id):
+    """Edit a monthly expense"""
+    if request.method != "POST":
+        expense = api.get_monthly_expense_by_id(monthly_expense_id)["monthly_expense"]
+        expense["date"] = datetime.datetime.strptime(expense["date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
+        expense["due_date"] = datetime.datetime.strptime(expense["due_date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
+        expense["form_of_payment"] = expense["form_of_payments"]["id"]
+        form = MonthlyExpenseForm(data=expense)
+    else:
+        post = request.POST.copy()
+        post['amount'] = post['amount'].replace('.', '').replace(',', '.')
+        form = MonthlyExpenseForm(data=post)
+        if form.is_valid():
+            new_monthly_expense = form.save(commit=False)
+            db_new_monthly_expense = api.update_monthly_expense(new_monthly_expense, monthly_expense_id)
+            return redirect('finance:monthly_expenses')
+
+    context = {'form': form, 'expense': expense}
+    return render(request, 'finance/monthly_expenses/edit_monthly_expense.html', context)
