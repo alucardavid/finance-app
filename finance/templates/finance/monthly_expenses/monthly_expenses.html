@@ -4,14 +4,14 @@
 
 {% block head %}
 {% load static %}
-    
+    <script  src="{% static 'js/monthly-expenses.js' %}"></script>
 {% endblock head %}
 
 
 {% block content %}
     <div class="row">
         <div class="col-12" style="height: 50px;">
-            <a class="btn btn-primary" href="#" role="button">Novo</a>
+            <a class="btn btn-primary" href="{% url 'finance:new_monthly_expense' %}" role="button">Novo</a>
             <button type="button" class="btn btn-danger" onclick="deleteExpenses(event, this)">Excluir</button>
         </div>
     </div>
@@ -22,9 +22,11 @@
                     <h5 class="card-title mb-10">Despesas Mensal</h5>
                     <div class="row">
                         <div class="col-sm- col-xs-2 col-lg-2 mt-3">
-                            <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;"  id="page">
-                                <option>15</option>
-                                <option>50</option>
+                            <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;" onchange="updateLimit(event, this)"  id="limit">
+                                <option {% if monthly_expenses.limit == 10 %} selected {% endif %} >10</option>
+                                <option {% if monthly_expenses.limit == 25 %} selected {% endif %} >25</option>
+                                <option {% if monthly_expenses.limit == 50 %} selected {% endif %} >50</option>
+                                <option {% if monthly_expenses.limit == 100 %} selected {% endif %} >100</option>
                             </select>
                             <label for="page"> items por pagina</label>
                         </div>
@@ -82,38 +84,36 @@
                     <!-- Row to pagination -->
                     <div class="row">
                         <div class="col-sm-6 col-xs-6 col-lg-6">
-                            <span>Monstrando {{ monthly_expenses.limit }} de {{ monthly_expenses.count | intcomma }}</span>
+                            <span>Monstrando {{ showing }}</span>
                         </div>
                         <div class="col-sm-6 col-xs-6 col-lg-6">
                             <nav aria-label="pagination" class="float-end">
                                 <ul class="pagination">
-                                    {% if page != 1 %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="{% url 'finance:monthly_expenses' %}?page=1" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="{% url 'finance:monthly_expenses' %}?page={{ prev_page }}" aria-label="Previous">
-                                            <span aria-hidden="true">&lsaquo;</span>
-                                            </a>
-                                        </li>
-                                    {%  endif%}
+                                    <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page=1" aria-label="First">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ prev_page }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lsaquo;</span>
+                                        </a>
+                                    </li>
                                     {% for npage in pages %}
-                                        <li class="page-item"><a class="page-link" href="{% url 'finance:monthly_expenses' %}?page={{ npage }}">{{ npage }}</a></li>
+                                        <li class="page-item {% if npage == page %}active{% endif %} "><a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ npage }}">{{ npage }}</a></li>
                                     {% endfor %}
-                                    {% if page != last_page %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="{% url 'finance:monthly_expenses' %}?page={{ next_page }}" aria-label="Next">
-                                                <span aria-hidden="true">&rsaquo;</span>
-                                            </a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="{% url 'finance:monthly_expenses' %}?page={{ last_page }}" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                    {% endif %}
+                                    
+                                    <li class="page-item {% if page == last_page %}disabled{% endif %}">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ next_page }}" aria-label="Next">
+                                            <span aria-hidden="true">&rsaquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item {% if page == last_page %}disabled{% endif %}">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ last_page }}" aria-label="Last">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    
                                 </ul>
                               </nav>
                         </div>

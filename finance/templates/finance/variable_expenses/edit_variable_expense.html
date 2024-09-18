@@ -22,23 +22,23 @@
             <form action="{% url 'finance:edit_variable_expense' expense.id%}" method="post">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="description" class="form-label">Data</label>
+                    <label for="date" class="form-label">Data</label>
                     {{ form.date }}
                 </div>
                 <div class="mb-3">
-                    <label for="description" class="form-label">Local</label>
+                    <label for="place" class="form-label">Local</label>
                     {{ form.place }}
                 </div>
                 <div class="mb-3">
-                    <label for="amount" class="form-label">Descrição</label>
+                    <label for="description" class="form-label">Descrição</label>
                     {{ form.description }}
                 </div>
                 <div class="mb-3">
-                    <label for="show" class="form-label">Forma de Pagamento</label>
+                    <label for="form_of_payment" class="form-label">Forma de Pagamento</label>
                     {{ form.form_of_payment }}    
                 </div> 
                 <div class="mb-3">
-                    <label for="show" class="form-label">Tipo</label>
+                    <label for="type" class="form-label">Tipo</label>
                     {{ form.type }}    
                 </div>
                 <div class="mb-4">

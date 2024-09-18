@@ -15,4 +15,5 @@ urlpatterns = [
     path("new-variable-expense/", views.new_variable_expense, name="new_variable_expense"),
     path("edit-variable-expense/<int:variable_expense_id>/", views.edit_variable_expense, name="edit_variable_expense"),
     path("monthly-expenses/", views.monthly_expenses, name="monthly_expenses"),
+    path("new-monthly-expense/", views.new_monthly_expense, name="new_monthly_expense"),
 ]

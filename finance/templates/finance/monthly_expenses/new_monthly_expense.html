@@ -4,12 +4,10 @@
 {% block head %}
 {% load static %}
     <script  src="{% static 'js/utils.js' %}"></script>
-    <script  src="{% static 'js/edit-variable-expense.js' %}"></script>
 {% endblock head %}
 
-
 {% block content %}
-    <h3>Nova Despesa Variavel</h3>
+    <h3>Nova Despesa Mensal</h3>
     <div class="container row">
         <div class="col-sm-12 col-xs-12 col-lg-6">
             {% if form.errors %}
@@ -17,7 +15,7 @@
                     {{ form.errors }}
                 </div>
             {% endif %}
-            <form action="{% url 'finance:new_variable_expense' %}" method="post">
+            <form action="{% url 'finance:new_monthly_expense' %}" method="post">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="date" class="form-label">Data</label>
@@ -32,16 +30,24 @@
                     {{ form.description }}
                 </div>
                 <div class="mb-3">
-                    <label for="form_of_payment" class="form-label">Forma de Pagamento</label>
-                    {{ form.form_of_payment }}    
-                </div> 
-                <div class="mb-3">
-                    <label for="type" class="form-label">Tipo</label>
-                    {{ form.type }}    
-                </div>
-                <div class="mb-4">
                     <label for="amount" class="form-label">Valor</label>
                     {{ form.amount }}
+                </div>
+                <div class="mb-3">
+                    <label for="total_plots" class="form-label">Quantidade Parcelas</label>
+                    {{ form.total_plots }}    
+                </div>
+                <div class="mb-3">
+                    <label for="current_plot" class="form-label">Parcela Atual</label>
+                    {{ form.current_plot }}    
+                </div>  
+                <div class="mb-3">
+                    <label for="due_date" class="form-label">Vencimento</label>
+                    {{ form.due_date }}    
+                </div>
+                <div class="mb-4">
+                    <label for="form_of_payment" class="form-label">Forma de Pagamento</label>
+                    {{ form.form_of_payment }}
                 </div> 
                 <button type="submit" class="btn btn-primary">Salvar</button>
             </form>

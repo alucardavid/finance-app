@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils.formats import localize
 from . import api   
-from .forms import BalanceForm, VariableExpenseForm
+from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm
 import requests
 import sys, datetime
 
@@ -99,12 +99,11 @@ def edit_variable_expense(request, variable_expense_id):
 def monthly_expenses(request):
     """Get all monthly expenses"""
     page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
+    limit = int(request.GET.get('limit') if request.GET.get('limit') is not None else 10)
     pages = []
-    monthly_expenses = api.get_all_monthly_expenses(page)
+    monthly_expenses = api.get_all_monthly_expenses(page, limit)
 
-    print()
-
-    for i in range(page if page < (int(monthly_expenses["total_pages"])-4) else (int(monthly_expenses["total_pages"])-4), (page + 5) if page < (int(monthly_expenses["total_pages"])-4) else (int(monthly_expenses["total_pages"])+1)):
+    for i in range(1 if page <=5 else page - 4, 6 if page <= 5 else (page + 1)):
         pages.append(i)
 
     context = { 
@@ -113,7 +112,15 @@ def monthly_expenses(request):
         'pages': pages,
         'prev_page': page - 1,
         'next_page': page + 1,
-        'last_page': monthly_expenses["total_pages"]
+        'last_page': monthly_expenses["total_pages"],
+        'showing': f"{(page * limit) - (limit - 1)} a {page * limit} de {format(monthly_expenses["count"], ',d').replace(",", ".")}"
     }
     return render(request, 'finance/monthly_expenses/monthly_expenses.html', context)
 
+def new_monthly_expense(request):
+    """Create a new monthly expense"""
+    if request.method != "POST":
+        form = MonthlyExpenseForm()
+
+    context = {'form': form}
+    return render(request, 'finance/monthly_expenses/new_monthly_expense.html', context)
