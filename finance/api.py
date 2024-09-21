@@ -160,13 +160,19 @@ def update_variable_expense(new_variable_expense, expense_id):
 
     return { "variable_expense": db_variable_expense}
 
-def get_all_monthly_expenses(page:int = 1, limit: int = 10, order_by: str = "monthly_expenses.id desc", due_date: str = None):
+def get_all_monthly_expenses(page:int = 1, limit: int = 10, order_by: str = "monthly_expenses.id desc", due_date: str = None, where: str = None):
     """Get all monthly expenses"""
 
     if due_date is None:
-        url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}"
+        if where is None:
+            url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}"
+        else:
+            url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}&where={where}"
     else:
-        url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}&due_date={due_date}"
+        if where is None:
+            url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}&due_date={due_date}"
+        else:
+            url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}&due_date={due_date}&where={where}"
 
     try:
         response = requests.get(url)

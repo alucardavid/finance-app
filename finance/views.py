@@ -102,7 +102,8 @@ def monthly_expenses(request):
     limit = int(request.GET.get('limit') if request.GET.get('limit') is not None else 10)
     due_date = request.GET.get('due_date')
     order_by = "monthly_expenses.id desc" if due_date is None else "monthly_expenses.form_of_payment_id, monthly_expenses.place, monthly_expenses.description asc"
-    monthly_expenses = api.get_all_monthly_expenses(page, limit, order_by, due_date)
+    where = request.GET.get('where')
+    monthly_expenses = api.get_all_monthly_expenses(page, limit, order_by, due_date, where)
     last_page = monthly_expenses["total_pages"]
     total_items = monthly_expenses["count"]
     pages = []
@@ -122,7 +123,8 @@ def monthly_expenses(request):
         'next_page': page + 1,
         'last_page': last_page,
         'showing': f"{(page * limit) - (limit - 1)} a {(page * limit) if (page * limit) <= total_items else total_items } de {format(monthly_expenses["count"], ',d').replace(",", ".")}",
-        'due_date': due_date
+        'due_date': due_date,
+        'where': where
     }
     return render(request, 'finance/monthly_expenses/monthly_expenses.html', context)
 

@@ -22,7 +22,7 @@
                     <h5 class="card-title mb-10">Despesas Mensal</h5>
                     <div class="row mt-3 mb-3">
                         <div class="col-sm-3 col-xs-3 col-lg-2">
-                            <label for="page"> items por pagina</label>
+                            <label for="page"> Items por pagina</label>
                             <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;" onchange="updateQueryParameters()"  id="limit">
                                 <option {% if monthly_expenses.limit == 10 %} selected {% endif %} >10</option>
                                 <option {% if monthly_expenses.limit == 25 %} selected {% endif %} >25</option>
@@ -31,13 +31,21 @@
                             </select>
                         </div>
                         <div class="col-sm-3 col-xs-3 col-lg-3">
-                            <label for="year_month">Vencimento - </label>
-                            <input type="month" class="form-control form-control-sm" id="year_month" style="width: auto; display: inline-block;" onchange="updateQueryParameters()" value="{{ due_date }}"/>
+                            <label for="year_month">Vencimento: </label>
+                            <input type="month" class="form-control form-control-sm" id="year_month" style="width: auto; display: inline-block;" onchange="updateQueryParameters()" value="{% if due_date != None %}{{ due_date }}{% endif %}"/>
+                        </div>
+                        <div class="col-sm-6 col-xs-6 col-lg-7">
+                            <div class="float-end">
+                                <label for="where">Pesquisar: </label>
+                                <input type="text" class="form-control" id="where" style="width: auto; display: inline-block;" value="{% if where != None %}{{ where }}{% endif %}" />
+                                <button type="button" class="btn btn-dark" onclick="updateQueryParameters()">Pesquisar</button>
+                                <button type="button" class="btn btn-light" onclick="clearSearch()">Limpar</button>
+                            </div>
                         </div>
                     </div>
                     <!-- Row to table -->
                     <div class="row">
-                        <div class="col-sm-12 col-xs-12 col-lg-12">
+                        <div class="col-sm-12 col-xs-12 col-lg-12 table-responsive-sm">
                             <table class="table table-hover table-sm mt-3">
                                 <thead>
                                     <tr>
@@ -94,27 +102,27 @@
                             <nav aria-label="pagination" class="float-end">
                                 <ul class="pagination">
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page=1{% if due_date != None %}&due_date={{due_date}}{% endif %}" aria-label="First">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page=1{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}" aria-label="First">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ prev_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}" aria-label="Previous">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ prev_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}" aria-label="Previous">
                                         <span aria-hidden="true">&lsaquo;</span>
                                         </a>
                                     </li>
                                     {% for npage in pages %}
                                         <li class="page-item {% if npage == page %}active{% endif %} ">
                                             <a class="page-link" 
-                                               href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ npage }}{% if due_date != None %}&due_date={{due_date}}{% endif %}">{{ npage }}</a></li>
+                                               href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ npage }}{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}">{{ npage }}</a></li>
                                     {% endfor %}
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ next_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}" aria-label="Next">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ next_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}" aria-label="Next">
                                             <span aria-hidden="true">&rsaquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ last_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}" aria-label="Last">
+                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ last_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}" aria-label="Last">
                                         <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
