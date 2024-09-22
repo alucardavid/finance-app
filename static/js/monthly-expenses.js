@@ -33,3 +33,46 @@ function clearSearch(){
 
     updateQueryParameters()
 }
+
+function updateBtnUploadCsv(event, target){
+    let btnUploadCsv = document.getElementById('upload-csv')
+    
+    if (target.value != ''){
+        btnUploadCsv.classList.remove('disabled')
+    }
+    else {
+        btnUploadCsv.classList.add('disabled')
+    }
+}
+
+function importExpenses(event, target){
+    let fileInput = document.getElementById('csv-file')
+    let data = new FormData()
+    let file = fileInput.files[0]
+    let csrfToken = getCookie('csrftoken')
+
+    if (file != undefined){
+        data.append('file', fileInput.files[0])
+    
+        console.log(file)
+        fetch(`http://${window.location.hostname}:${window.location.port}/import-monthly-expenses/`, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "X-CSRFToken": csrfToken,
+            },
+            body: data})
+            .then(res => {
+                if (res.ok) {
+                    return res
+                }
+                throw new Error('Something went wrong')
+            })
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => console.log(err))
+
+    }
+
+}

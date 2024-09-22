@@ -17,4 +17,5 @@ urlpatterns = [
     path("monthly-expenses/", views.monthly_expenses, name="monthly_expenses"),
     path("new-monthly-expense/", views.new_monthly_expense, name="new_monthly_expense"),
     path("edit-monthly-balance/<int:monthly_expense_id>/", views.edit_monthly_expense, name="edit_monthly_expense"),
+    path("import-monthly-expenses/", views.import_monthly_expenses, name="import_monthly_expenses"),
 ]

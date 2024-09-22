@@ -3,10 +3,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils.formats import localize
-from . import api   
+from django import forms
 from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm
-import requests
-import sys, datetime
+from .models import MonthlyExpense
+import sys, datetime, csv, requests
+from . import api
+from datetime import date, datetime
+
 
 def index(request):
     """The home page for Finance App"""
@@ -164,3 +167,35 @@ def edit_monthly_expense(request, monthly_expense_id):
 
     context = {'form': form, 'expense': expense}
     return render(request, 'finance/monthly_expenses/edit_monthly_expense.html', context)
+
+def import_monthly_expenses(request):
+    """Import expenses from csv file"""
+    file_data = request.FILES['file'].read().decode('utf-8')
+    expenses_imported = []
+    
+    lines = file_data.split('\n')
+    
+    try:
+        for index, line in enumerate(lines):
+            if index > 0:
+                line = line.split(',')
+                print(line, file=sys.stderr)
+                expense =  MonthlyExpense(
+                    date = datetime.strptime(line[0], '%Y-%m-%d').date(),
+                    place = line[1],
+                    description = line[2],
+                    amount = line[3],
+                    total_plots = line[4],
+                    current_plot = line[5],
+                    due_date = datetime.strptime(line[6], '%Y-%m-%d').date(),
+                    form_of_payment_id = line[7].replace('\r', '')
+                )
+
+                # expenses_imported.append(api.create_monthly_expense(expense))
+
+    except:
+        return HttpResponse("Wasn't possible to import expenses.")
+        
+    return HttpResponse("Expenses was imported with success.")
+
+
