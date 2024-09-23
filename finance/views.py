@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -125,7 +125,7 @@ def monthly_expenses(request):
         'prev_page': page - 1,
         'next_page': page + 1,
         'last_page': last_page,
-        'showing': f"{(page * limit) - (limit - 1)} a {(page * limit) if (page * limit) <= total_items else total_items } de {format(monthly_expenses["count"], ',d').replace(",", ".")}",
+        'showing': f"{(page * limit) - (limit - 1)} a {(page * limit) if (page * limit) <= total_items else total_items } de {format(monthly_expenses['count'], ',d').replace(',', '.')}",
         'due_date': due_date,
         'where': where
     }
@@ -152,8 +152,8 @@ def edit_monthly_expense(request, monthly_expense_id):
     """Edit a monthly expense"""
     if request.method != "POST":
         expense = api.get_monthly_expense_by_id(monthly_expense_id)["monthly_expense"]
-        expense["date"] = datetime.datetime.strptime(expense["date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
-        expense["due_date"] = datetime.datetime.strptime(expense["due_date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
+        expense["date"] = datetime.strptime(expense["date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
+        expense["due_date"] = datetime.strptime(expense["due_date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
         expense["form_of_payment"] = expense["form_of_payments"]["id"]
         form = MonthlyExpenseForm(data=expense)
     else:
@@ -177,9 +177,9 @@ def import_monthly_expenses(request):
     
     try:
         for index, line in enumerate(lines):
-            if index > 0:
-                line = line.split(',')
-                print(line, file=sys.stderr)
+            line = line.split(';')
+            
+            if len(line) > 0:
                 expense =  MonthlyExpense(
                     date = datetime.strptime(line[0], '%Y-%m-%d').date(),
                     place = line[1],
@@ -190,11 +190,11 @@ def import_monthly_expenses(request):
                     due_date = datetime.strptime(line[6], '%Y-%m-%d').date(),
                     form_of_payment_id = line[7].replace('\r', '')
                 )
-
-                # expenses_imported.append(api.create_monthly_expense(expense))
+                
+                expenses_imported.append(api.create_monthly_expense(expense))
 
     except:
-        return HttpResponse("Wasn't possible to import expenses.")
+        return HttpResponseBadRequest("Wasn't possible to import expenses.")
         
     return HttpResponse("Expenses was imported with success.")
 

@@ -35,7 +35,7 @@ function clearSearch(){
 }
 
 function updateBtnUploadCsv(event, target){
-    let btnUploadCsv = document.getElementById('upload-csv')
+    let btnUploadCsv = document.getElementById('upload-csv')    
     
     if (target.value != ''){
         btnUploadCsv.classList.remove('disabled')
@@ -47,14 +47,19 @@ function updateBtnUploadCsv(event, target){
 
 function importExpenses(event, target){
     let fileInput = document.getElementById('csv-file')
+    let btnUploadCsv = document.getElementById('upload-csv')
+    let labelBtnUploadCsv = document.getElementById('btn-upload-csv-label')
+    let spinnerLoading = document.getElementById('spinner-upload-csv')
     let data = new FormData()
     let file = fileInput.files[0]
     let csrfToken = getCookie('csrftoken')
 
     if (file != undefined){
         data.append('file', fileInput.files[0])
-    
-        console.log(file)
+        btnUploadCsv.classList.add('disabled')
+        spinnerLoading.classList.remove('d-none')
+        labelBtnUploadCsv.innerText = 'Carregando'
+
         fetch(`http://${window.location.hostname}:${window.location.port}/import-monthly-expenses/`, {
             method: "POST",
             credentials: "same-origin",
@@ -66,13 +71,44 @@ function importExpenses(event, target){
                 if (res.ok) {
                     return res
                 }
-                throw new Error('Something went wrong')
+                throw new Error('Something went wrong, please check the file format or items.')
             })
             .then(res => {
-                console.log(res)
+                window.location.reload()
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                showAlert(err)
+            })
+            .finally(res => {
+                btnUploadCsv.classList.remove('disabled')
+                spinnerLoading.classList.add('d-none')
+                labelBtnUploadCsv.innerText = 'Importar CSV'      
+            })
 
     }
+
+}
+
+function showAlert(msg){
+    let alertDiv = document.getElementById('alerta')
+    let alertLabel = document.getElementById('alerta-label')
+
+    alertLabel.innerText = msg
+
+    alertDiv.style.display = "block"
+
+    setTimeout(() => {
+        alertDiv.style.opacity = "1"
+    }, 100);
+}
+
+function closeAlert(event, target){
+    let alertDiv = document.getElementById('alerta')
+
+    alertDiv.style.opacity = "0"
+    
+    setTimeout(() => {
+        alertDiv.style.display = "none"
+    }, 600);
 
 }
