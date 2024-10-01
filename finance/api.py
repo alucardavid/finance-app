@@ -73,19 +73,22 @@ def update_balance(new_balance, balance_id):
 
     return { "balance": db_balance}
 
-def get_all_variable_expenses(limit: int = 15, order_by: str = "variable_expenses.id desc"):
+def get_all_variable_expenses(page: int = 1, limit: int = 10, order_by: str = "variable_expenses.id desc", where: str = None):
     """Get all variable expenses"""
 
-    url = f"{host}/variable-expenses?limit={limit}&order_by={order_by}"
+    if where is None:
+        url = f"{host}/variable-expenses?limit={limit}&order_by={order_by}&page={page}"
+    else:
+        url = f"{host}/variable-expenses?limit={limit}&order_by={order_by}&page={page}&where={where}"
 
     try:
         response = requests.get(url)
         data = response.json()
-        variable_expenses = data
+        expenses = data
     except Exception as e:
-        variable_expenses = {}
+        expenses = {}
 
-    return { "variable_expenses": variable_expenses}
+    return expenses
 
 def get_all_form_of_payments(show: str = "S", limit: int = 15, order_by: str = "form_of_payments.id desc"):
     """Get all form of payments"""

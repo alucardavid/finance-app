@@ -59,8 +59,33 @@ def new_balance(request):
 
 def variable_expenses(request):
     """Show all variable expenses"""
-    
-    context = api.get_all_variable_expenses()
+    page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
+    limit = int(request.GET.get('limit') if request.GET.get('limit') is not None else 10)
+    order_by = "variable_expenses.id desc"
+    where = request.GET.get('where')
+    variable_expenses = api.get_all_variable_expenses(page, limit, order_by, where)
+    print(variable_expenses, file=sys.stderr)
+    last_page = variable_expenses["total_pages"]
+    total_items = variable_expenses["count"]
+    pages = []
+
+    if last_page <= 5:
+        for i in range(1, last_page+1):
+            pages.append(i)
+    else:
+        for i in range(1 if page <=5 else page - 4, 6 if page <= 5 else (page + 1)):
+            pages.append(i)
+
+    context = { 
+        'variable_expenses': variable_expenses,
+        'page': page,
+        'pages': pages,
+        'prev_page': page - 1,
+        'next_page': page + 1,
+        'last_page': last_page,
+        'showing': f"{(page * limit) - (limit - 1)} a {(page * limit) if (page * limit) <= total_items else total_items } de {format(variable_expenses['count'], ',d').replace(',', '.')}",
+        'where': where
+    }
 
     return render(request, 'finance/variable_expenses/variable_expenses.html', context)
 
