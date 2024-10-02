@@ -1,6 +1,37 @@
 {% extends 'finance/base.html' %}
 {% load humanize %}
-
+{% load static %}
 {% block content %}
-        
+    <div class="row">
+        <div class="col-3">
+            <div class="card">
+                <div class="row g-0">
+                  <div class="col-md-4 p-3">
+                    <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+                  </div>
+                  <div class="col">
+                    <div class="card-body">
+                      <h5 class="card-title">Saldo Total</h5>
+                      <h1 style="font-size: 3vw;">R$ {{ total_balances | intcomma }}</h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+       </div>
+       <div class="col-3">
+        <div class="card">
+            <div class="row g-0">
+              <div class="col-md-4 p-3">
+                <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+              </div>
+              <div class="col">
+                <div class="card-body">
+                  <h5 class="card-title">Despesas Proximo Mes</h5>
+                  <h1 style="font-size: 3vw;">R$ {{ total_expenses_next_month | intcomma }}</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+   </div>
+    </div>
 {% endblock content %}

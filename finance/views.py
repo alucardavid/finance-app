@@ -13,8 +13,20 @@ from datetime import date, datetime
 
 def index(request):
     """The home page for Finance App"""
-        
-    return render(request, 'finance/index.html')
+    balances = api.get_all_balances()['balances']
+    monthly_expenses = api.get_all_monthly_expenses(page=1, limit=999, due_date="2024-10")["items"]
+
+    total_balances = round(sum(balance['value'] for balance in balances))
+    total_expenses_next_month = round(sum(expense['amount'] for expense in monthly_expenses))
+    
+
+    context = {
+        'total_balances': total_balances,
+        'total_expenses_next_month': total_expenses_next_month
+    }
+
+
+    return render(request, 'finance/index.html', context)
 
 def balances(request):
     """Page to show all balances"""
