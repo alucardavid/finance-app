@@ -1,37 +1,94 @@
 {% extends 'finance/base.html' %}
 {% load humanize %}
 {% load static %}
+
+{% block head %}
+  <script src="https://code.highcharts.com/highcharts.js"></script> 
+  <script src="{% static 'js/index.js' %}"></script>
+{% endblock head %}
 {% block content %}
-    <div class="row">
-        <div class="col-3">
-            <div class="card">
-                <div class="row g-0">
-                  <div class="col-md-4 p-3">
-                    <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
-                  </div>
-                  <div class="col">
-                    <div class="card-body">
-                      <h5 class="card-title">Saldo Total</h5>
-                      <h1 style="font-size: 3vw;">R$ {{ total_balances | intcomma }}</h1>
-                    </div>
-                  </div>
-                </div>
-              </div>
-       </div>
-       <div class="col-3">
-        <div class="card">
-            <div class="row g-0">
-              <div class="col-md-4 p-3">
-                <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
-              </div>
-              <div class="col">
-                <div class="card-body">
-                  <h5 class="card-title">Despesas Proximo Mes</h5>
-                  <h1 style="font-size: 3vw;">R$ {{ total_expenses_next_month | intcomma }}</h1>
-                </div>
-              </div>
+  <div class="row">
+    <!-- Card Saldo Total -->
+    <div class="col-md-auto">
+      <div class="card">
+        <div class="row g-0">
+          <!-- <div class="col-md-2 p-3">
+            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+          </div> -->
+          <div class="col-md-auto">
+            <div class="card-body">
+              <h5 class="card-title">Saldo Total</h5>
+              <h1 class="text-success" style="font-size: 30px;">R$ {{ total_balances | intcomma }}</h1>
             </div>
           </div>
-   </div>
+        </div>
+      </div>
     </div>
+    <!-- Fim Saldo Total -->
+
+    <!-- Card Saldo Total - Despesas Pendentes -->
+    <div class="col-md-auto">
+      <div class="card">
+        <div class="row g-0">
+          <!-- <div class="col-md-2 p-3">
+            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+          </div> -->
+          <div class="col">
+            <div class="card-body">
+              <h5 class="card-title">Saldo Total - Pendencias</h5>
+              <h1 class="text-success" style="font-size: 30px;">R$ {{ total_balances_min_expenses | intcomma }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fim Card Saldo Total - Despesas Pendentes -->
+
+    <!-- Card Total despesas pendentes -->
+    <div class="col-md-auto">
+      <div class="card">
+        <div class="row g-0">
+          <!-- <div class="col-md-2 p-3">
+            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+          </div> -->
+          <div class="col">
+            <div class="card-body">
+              <h5 class="card-title">Despesas Pendentes</h5>
+              <h1 class="text-danger" style="font-size: 30px;">R$ {{ total_monthly_expenses_pend | intcomma }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fim Card Total despesas pendentes -->
+
+    <!-- Card Despesas proximo mes -->
+    <!-- <div class="col-md-auto">
+      <div class="card">
+        <div class="row g-0">
+          <div class="col-md-2 p-3">
+            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col">
+            <div class="card-body">
+              <h5 class="card-title">Despesas Proximo Mes</h5>
+              <h1 style="font-size: 30px;">R$ {{ total_expenses_next_month | intcomma }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <!-- Fim Card Despesas proximo mes -->
+
+  <!-- Grafico de despesas e saldos por mes -->
+  <div class="row mt-5">
+    <div class="col-6">
+      <div id="monthly-chart" style="width:100%; height:400px;">
+
+      </div>
+    </div>
+  </div>
+  <!-- Fim Grafico de despesas e saldos por mes -->
+
 {% endblock content %}

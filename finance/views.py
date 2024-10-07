@@ -8,21 +8,23 @@ from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm
 from .models import MonthlyExpense
 import sys, datetime, csv, requests
 from . import api
-from datetime import date, datetime
+from datetime import datetime, timedelta
 
 
 def index(request):
     """The home page for Finance App"""
-    balances = api.get_all_balances()['balances']
-    monthly_expenses = api.get_all_monthly_expenses(page=1, limit=999, due_date="2024-10")["items"]
+    balances = api.get_all_balances()["balances"]
+    total_monthly_expenses_pend = _get_monthly_expense_pend()
+    expenses_next_month = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+timedelta(days=30)).strftime("%Y-%m"), where="Pendente")["items"]
 
-    total_balances = round(sum(balance['value'] for balance in balances))
-    total_expenses_next_month = round(sum(expense['amount'] for expense in monthly_expenses))
-    
+    total_balances = round(sum(balance["value"] for balance in balances))
+    total_expenses_next_month = round(sum(expense["amount"] for expense in expenses_next_month))
 
     context = {
         'total_balances': total_balances,
-        'total_expenses_next_month': total_expenses_next_month
+        'total_monthly_expenses_pend': total_monthly_expenses_pend,
+        'total_expenses_next_month': total_expenses_next_month,
+        'total_balances_min_expenses': total_balances - total_monthly_expenses_pend
     }
 
 
@@ -235,4 +237,16 @@ def import_monthly_expenses(request):
         
     return HttpResponse("Expenses was imported with success.")
 
+def _get_monthly_expense_pend():
+    """Retrive monthly expenses to show on index page"""
+    monthly_expenses = api.get_all_monthly_expenses(page=1, limit=999, due_date=datetime.today().strftime("%Y-%m"), where="Pendente")["items"]
 
+    print(len(monthly_expenses))
+
+    if len(monthly_expenses) > 0:
+        total_pend = round(sum(expense["amount"] for expense in monthly_expenses))
+    else:
+        monthly_expenses = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+timedelta(days=30)).strftime("%Y-%m"), where="Pendente")["items"]
+        total_pend = round(sum(expense["amount"] for expense in monthly_expenses))
+
+    return total_pend
