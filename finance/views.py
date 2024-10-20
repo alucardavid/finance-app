@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils.formats import localize
 from django import forms
-from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm
+from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm, IncomingForm
 from .models import MonthlyExpense
 import sys, datetime, csv, requests
 from . import api
@@ -16,15 +16,19 @@ def index(request):
     balances = api.get_all_balances()["balances"]
     total_monthly_expenses_pend = _get_monthly_expense_pend()
     expenses_next_month = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+timedelta(days=30)).strftime("%Y-%m"), where="Pendente")["items"]
+    pending_incomings = api.get_all_incomings('Pendente')
 
     total_balances = round(sum(balance["value"] for balance in balances))
     total_expenses_next_month = round(sum(expense["amount"] for expense in expenses_next_month))
+    total_incomings = round(sum(incoming["amount"] for incoming in pending_incomings))
 
     context = {
         'total_balances': total_balances,
         'total_monthly_expenses_pend': total_monthly_expenses_pend,
         'total_expenses_next_month': total_expenses_next_month,
-        'total_balances_min_expenses': total_balances - total_monthly_expenses_pend
+        'total_balances_min_expenses': total_balances - total_monthly_expenses_pend,
+        'total_incomings': total_incomings,
+        'balance_plus_incomings': total_balances + total_incomings,
     }
 
 
@@ -123,7 +127,7 @@ def edit_variable_expense(request, variable_expense_id):
     """Edit a variable expense"""
     if request.method != "POST":
         variable_expense = api.get_variable_expense_by_id(variable_expense_id)["variable_expense"]
-        variable_expense["date"] = datetime.datetime.strptime(variable_expense["date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
+        variable_expense["date"] = datetime.strptime(variable_expense["date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
         variable_expense["form_of_payment"] = variable_expense["form_of_payments"]["id"]
         form = VariableExpenseForm(data=variable_expense)
     else:
@@ -237,11 +241,57 @@ def import_monthly_expenses(request):
         
     return HttpResponse("Expenses was imported with success.")
 
+def incomings(request):
+    """Page to show all incomings"""
+    incomings = api.get_all_incomings()
+
+    context = {"incomings": incomings}
+
+    return render(request, 'finance/incomings/incomings.html', context)
+
+def new_incoming(request):
+    """Page to add new incoming"""
+    if request.method != "POST":
+        form = IncomingForm()
+    else:
+        post = request.POST.copy()
+        post["amount"] = post["amount"].replace('.', '').replace(',', '.')
+        form = IncomingForm(data=post)
+        if form.is_valid():
+            new_incoming = form.save(commit=False)
+            db_new_incoming = api.create_incoming(new_incoming)
+            return redirect('finance:incomings')
+    
+
+    context = { "form": form}
+
+    return render(request, 'finance/incomings/new_incoming.html', context)
+
+def edit_incoming(request, incoming_id):
+    """Page to edit a incoming"""
+    if request.method != "POST":
+        incoming = api.get_incoming_by_id(incoming_id)["incoming"]
+        incoming["date"] = datetime.strptime(incoming["date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
+        form = IncomingForm(data=incoming)
+    else:
+        post = request.POST.copy()
+        post['amount'] = post['amount'].replace('.', '').replace(',', '.')
+        form = IncomingForm(data=post)
+        if form.is_valid():
+            new_incoming = form.save(commit=False)
+            db_incoming = api.update_incoming(new_incoming, incoming_id)
+            return redirect('finance:incomings')
+
+    context = {
+        'form': form,
+        'incoming': incoming
+    }
+
+    return render(request, 'finance/incomings/edit_incoming.html', context)
+
 def _get_monthly_expense_pend():
     """Retrive monthly expenses to show on index page"""
     monthly_expenses = api.get_all_monthly_expenses(page=1, limit=999, due_date=datetime.today().strftime("%Y-%m"), where="Pendente")["items"]
-
-    print(len(monthly_expenses))
 
     if len(monthly_expenses) > 0:
         total_pend = round(sum(expense["amount"] for expense in monthly_expenses))
@@ -250,3 +300,5 @@ def _get_monthly_expense_pend():
         total_pend = round(sum(expense["amount"] for expense in monthly_expenses))
 
     return total_pend
+    
+

@@ -247,3 +247,77 @@ def update_monthly_expense(new_expense, expense_id):
         db_expense = {}
 
     return { "monthly_expense": db_expense}
+
+def get_all_incomings(status: str = None, order_by: str = "id desc"):
+    """Get all incomings"""
+    if not status:
+        url = f"{host}/incomings?order_by={order_by}"
+    else:
+        url = f"{host}/incomings?status={status}"
+
+    try:
+        response = requests.get(url)
+        data = response.json()
+        incomings = data
+    
+    except Exception as e:
+        incomings = []
+
+    return incomings
+
+def create_incoming(new_incoming):
+    """Create a new incoming"""
+
+    url = f"{host}/incomings/"
+    data = {
+        'description': new_incoming.description,
+        'amount': str(new_incoming.amount),
+        'source': new_incoming.source,
+        'date': new_incoming.date.strftime("%Y-%m-%d"),
+        'status': new_incoming.status
+    }
+
+    try:
+        response =  requests.post(url, json= data)
+        response_data = response.json()
+        db_incoming = response_data
+    except Exception as e:
+        db_incoming = {}
+
+    return { 'incoming': db_incoming}
+
+
+def get_incoming_by_id(incoming_id):
+    """Get a incoming by id"""
+
+    url = f"{host}/incomings/{incoming_id}"
+
+    try:
+        response = requests.get(url)
+        data = response.json()
+        incoming =  data
+    except:
+        incoming = {}
+
+    return { "incoming": incoming}
+
+def update_incoming(new_incoming, incoming_id):
+    """Update incoming"""
+
+    url = f"{host}/incomings/{incoming_id}"
+    data = {
+        'description': new_incoming.description,
+        'amount': str(new_incoming.amount),
+        'source': new_incoming.source,
+        'date': new_incoming.date.strftime("%Y-%m-%d"),
+        'status': new_incoming.status
+    }
+
+    try:
+        response =  requests.put(url, json= data)
+        response_data = response.json()
+        db_incoming = response_data
+    except Exception as e:
+        db_incoming = {}
+
+    return { 'incoming': db_incoming}

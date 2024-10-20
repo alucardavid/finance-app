@@ -26,6 +26,42 @@
     </div>
     <!-- Fim Saldo Total -->
 
+    <!-- Card Total Incomings -->
+    <div class="col-md-auto">
+      <div class="card">
+        <div class="row g-0">
+          <!-- <div class="col-md-2 p-3">
+            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+          </div> -->
+          <div class="col-md-auto">
+            <div class="card-body">
+              <h5 class="card-title">Valor a Receber</h5>
+              <h1 class="text-warning" style="font-size: 30px;">R$ {{ total_incomings | intcomma }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fim Total Incomings -->
+
+    <!-- Card Total Incomings + Saldo -->
+    <div class="col-md-auto">
+      <div class="card">
+        <div class="row g-0">
+          <!-- <div class="col-md-2 p-3">
+            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+          </div> -->
+          <div class="col-md-auto">
+            <div class="card-body">
+              <h5 class="card-title">Saldo + A receber</h5>
+              <h1 class="text-warning" style="font-size: 30px;">R$ {{ balance_plus_incomings | intcomma }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fim Total Incomings + Saldo -->
+
     <!-- Card Saldo Total - Despesas Pendentes -->
     <div class="col-md-auto">
       <div class="card">

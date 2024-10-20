@@ -1,4 +1,4 @@
-const HOST_API = 'http://localhost:7000'
+const HOST_API = 'http://localhost:8001'
 
 function getCookie(name) {
     let cookieValue = null;

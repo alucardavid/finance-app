@@ -1,0 +1,44 @@
+{% extends 'finance/base.html' %}
+{% load humanize %}
+{% block head %}
+{% load static %}
+    <script  src="{% static 'js/utils.js' %}"></script>
+{% endblock head %}
+
+{% block content %}
+    <h3>Editar Receita Futura</h3>
+    <div class="container row">
+        <div class="col-sm-12 col-xs-12 col-lg-6">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+            <form action="{% url 'finance:edit_incoming' incoming.id %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="date" class="form-label">Data do Pagamento</label>
+                    {{ form.date }}
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Descrição</label>
+                    {{ form.description }}
+                </div>
+                <div class="mb-4">
+                    <label for="amount" class="form-label">Valor</label>
+                    {{ form.amount }}    
+                </div>
+                <div class="mb-4">
+                    <label for="source" class="form-label">Fonte</label>
+                    {{ form.source }}    
+                </div>  
+                <div class="mb-4">
+                    <label for="status" class="form-label">Status</label>
+                    {{ form.status }}    
+                </div> 
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a class="btn btn-danger" href="{% url 'finance:incomings' %}" role="button">Cancelar</a>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

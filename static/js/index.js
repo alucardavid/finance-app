@@ -28,8 +28,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             categories.push(expense.ano_mes)
             totalExpenses.push(expense.total)
-            totalBalances.push(tmpBalance)
-            
+            totalBalances.push(parseInt(tmpBalance))
         });
 
     }

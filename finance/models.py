@@ -65,4 +65,16 @@ class MonthlyExpense(models.Model):
         managed = False
         db_table = 'monthly_expenses'
 
+class Incoming(models.Model):
+    description = models.CharField(max_length=50)
+    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    source = models.CharField(max_length=50)
+    date = models.DateTimeField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField(blank=True, null=True)
+    status = models.CharField(max_length=20)
+
+    class Meta:
+        managed = False
+        db_table = 'incomings'
     
