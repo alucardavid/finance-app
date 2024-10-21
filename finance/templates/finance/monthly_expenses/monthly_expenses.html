@@ -5,7 +5,7 @@
 {% block head %}
 {% load static %}
     <script  src="{% static 'js/monthly-expenses.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/monthly-expenses.css' %}">
+    <link rel="stylesheet" href="{% static 'css/alerta.css' %}">
 {% endblock head %}
 
 
@@ -112,27 +112,27 @@
                             <nav aria-label="pagination" class="float-end">
                                 <ul class="pagination">
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page=1{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}" aria-label="First">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters(1)" aria-label="First">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ prev_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}" aria-label="Previous">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters('{{prev_page}}')" aria-label="Previous">
                                         <span aria-hidden="true">&lsaquo;</span>
                                         </a>
                                     </li>
                                     {% for npage in pages %}
                                         <li class="page-item {% if npage == page %}active{% endif %} ">
                                             <a class="page-link" 
-                                               href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ npage }}{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}">{{ npage }}</a></li>
+                                               href="#" onclick="updateQueryParameters('{{npage}}')">{{ npage }}</a></li>
                                     {% endfor %}
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ next_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}" aria-label="Next">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters('{{next_page}}')" aria-label="Next">
                                             <span aria-hidden="true">&rsaquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:monthly_expenses' %}?limit={{ monthly_expenses.limit }}&page={{ last_page }}{% if due_date != None %}&due_date={{due_date}}{% endif %}{% if where != None %}&where={{ where }}{% endif %}" aria-label="Last">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters('{{last_page}}')" aria-label="Last">
                                         <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>

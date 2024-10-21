@@ -14,13 +14,13 @@ function deleteExpenses(event, target){
     }
 }
 
-function updateQueryParameters(){
+function updateQueryParameters(page){
     let url = window.location.href.split("?")
     limit = document.getElementById('limit')
-    page = document.querySelector('li.active a')
+    page = (page === undefined ? document.querySelector('li.active a').innerHTML : page)
     due_date = document.getElementById('year_month')
     where = document.getElementById('where')
-    queryParameters = `?limit=${limit.value}&page=${page.innerHTML}`
+    queryParameters = `?limit=${limit.value}&page=${page}`
     
     queryParameters += (due_date.value != '' ? `&due_date=${due_date.value}` : '')
     queryParameters += (where.value != '' ? `&where=${where.value}` : '')

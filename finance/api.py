@@ -248,12 +248,18 @@ def update_monthly_expense(new_expense, expense_id):
 
     return { "monthly_expense": db_expense}
 
-def get_all_incomings(status: str = None, order_by: str = "id desc"):
+def get_all_incomings(page: int = 1, limit: int = 10, status: str = None, order_by: str = "id desc", where: str = None):
     """Get all incomings"""
     if not status:
-        url = f"{host}/incomings?order_by={order_by}"
+        if not where:
+            url = f"{host}/incomings?order_by={order_by}&limit={limit}&order_by={order_by}&page={page}"
+        else:
+            url = f"{host}/incomings?limit={limit}&order_by={order_by}&page={page}&where={where}"
     else:
-        url = f"{host}/incomings?status={status}"
+        if not where:
+            url = f"{host}/incomings?status={status}&limit={limit}&order_by={order_by}&page={page}"
+        else:
+            url = f"{host}/incomings?status={status}&limit={limit}&order_by={order_by}&page={page}&where={where}"
 
     try:
         response = requests.get(url)

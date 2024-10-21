@@ -30,10 +30,10 @@
                         <div class="col-sm-3 col-xs-3 col-lg-2">
                             <label for="page"> Items por pagina</label>
                             <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;" onchange="updateQueryParameters()"  id="limit">
-                                <option >10</option>
-                                <option >25</option>
-                                <option >50</option>
-                                <option >100</option>
+                                <option {% if incomings.limit == 10 %} selected {% endif %} >10</option>
+                                <option {% if incomings.limit == 25 %} selected {% endif %}>25</option>
+                                <option {% if incomings.limit == 50 %} selected {% endif %}>50</option>
+                                <option {% if incomings.limit == 100 %} selected {% endif %}>100</option>
                             </select>
                         </div>
                         <div class="col-sm-9 col-xs-9 col-lg-10">
@@ -62,7 +62,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {% for incoming in incomings %}
+                                {% for incoming in incomings.items %}
                                     <tr>
                                         <td>
                                             <div>
@@ -97,27 +97,27 @@
                             <nav aria-label="pagination" class="float-end">
                                 <ul class="pagination">
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="#" aria-label="First">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters(1)" aria-label="First">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="#" aria-label="Previous">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters('{{prev_page}}')" aria-label="Previous">
                                         <span aria-hidden="true">&lsaquo;</span>
                                         </a>
                                     </li>
                                     {% for npage in pages %}
                                         <li class="page-item {% if npage == page %}active{% endif %} ">
                                             <a class="page-link" 
-                                               href="#">{{ npage }}</a></li>
+                                               href="#" onclick="updateQueryParameters('{{ npage }}')">{{ npage }}</a></li>
                                     {% endfor %}
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="#" aria-label="Next">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters('{{next_page}}')" aria-label="Next">
                                             <span aria-hidden="true">&rsaquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="#" aria-label="Last">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters('{{last_page}}')" aria-label="Last">
                                         <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>

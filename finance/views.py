@@ -16,7 +16,7 @@ def index(request):
     balances = api.get_all_balances()["balances"]
     total_monthly_expenses_pend = _get_monthly_expense_pend()
     expenses_next_month = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+timedelta(days=30)).strftime("%Y-%m"), where="Pendente")["items"]
-    pending_incomings = api.get_all_incomings('Pendente')
+    pending_incomings = api.get_all_incomings(1, 999,'Pendente')["items"]
 
     total_balances = round(sum(balance["value"] for balance in balances))
     total_expenses_next_month = round(sum(expense["amount"] for expense in expenses_next_month))
@@ -82,7 +82,6 @@ def variable_expenses(request):
     order_by = "variable_expenses.id desc"
     where = request.GET.get('where')
     variable_expenses = api.get_all_variable_expenses(page, limit, order_by, where)
-    print(variable_expenses, file=sys.stderr)
     last_page = variable_expenses["total_pages"]
     total_items = variable_expenses["count"]
     pages = []
@@ -243,9 +242,33 @@ def import_monthly_expenses(request):
 
 def incomings(request):
     """Page to show all incomings"""
-    incomings = api.get_all_incomings()
+    page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
+    limit = int(request.GET.get('limit') if request.GET.get('limit') is not None else 10)
+    where = request.GET.get('where')
+    incomings = api.get_all_incomings(page, limit, None, "id desc", where)
+    last_page = incomings["total_pages"]
+    total_items = incomings["count"]
+    pages = []
 
-    context = {"incomings": incomings}
+    if last_page <= 5:
+        for i in range(1, last_page+1):
+            pages.append(i)
+    else:
+        for i in range(1 if page <=5 else page - 4, 6 if page <= 5 else (page + 1)):
+            pages.append(i)
+    
+    print(incomings["limit"])
+
+    context = { 
+        'incomings': incomings,
+        'page': page,
+        'pages': pages,
+        'prev_page': page - 1,
+        'next_page': page + 1,
+        'last_page': last_page,
+        'showing': f"{(page * limit) - (limit - 1)} a {(page * limit) if (page * limit) <= total_items else total_items } de {format(incomings['count'], ',d').replace(',', '.')}",
+        'where': where
+    }
 
     return render(request, 'finance/incomings/incomings.html', context)
 
