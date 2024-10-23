@@ -1,5 +1,5 @@
 from django.forms import TextInput, ModelForm, ChoiceField, Select, ModelChoiceField, DateInput, NumberInput
-from .models import Balance, VariableExpense, MonthlyExpense, Incoming
+from .models import Balance, VariableExpense, MonthlyExpense, Incoming, ExpenseCategory
 from . import api   
 
 class BalanceForm(ModelForm):
@@ -63,4 +63,13 @@ class IncomingForm(ModelForm):
             'source': TextInput(attrs={'class': 'form-control'}),
             'date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'status': Select(attrs={'class': 'form-control'}, choices=(("", "Selecione"),("Pago", "Pago"), ("Pendente", "Pendente"))),
+        }
+
+class ExpenseCategoryForm(ModelForm):
+    class Meta:
+        model = ExpenseCategory
+        fields = ['description', 'show']
+        widgets = {
+            'description': TextInput(attrs={'class': 'form-control'}),
+            'show': Select(attrs={'class': 'form-control'}, choices=(("", "Selecione"),("S", "Sim"), ("N", "Não"))),
         }

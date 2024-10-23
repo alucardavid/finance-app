@@ -252,7 +252,7 @@ def get_all_incomings(page: int = 1, limit: int = 10, status: str = None, order_
     """Get all incomings"""
     if not status:
         if not where:
-            url = f"{host}/incomings?order_by={order_by}&limit={limit}&order_by={order_by}&page={page}"
+            url = f"{host}/incomings?limit={limit}&order_by={order_by}&page={page}"
         else:
             url = f"{host}/incomings?limit={limit}&order_by={order_by}&page={page}&where={where}"
     else:
@@ -292,7 +292,6 @@ def create_incoming(new_incoming):
 
     return { 'incoming': db_incoming}
 
-
 def get_incoming_by_id(incoming_id):
     """Get a incoming by id"""
 
@@ -327,3 +326,71 @@ def update_incoming(new_incoming, incoming_id):
         db_incoming = {}
 
     return { 'incoming': db_incoming}
+
+def get_all_expense_categorys(page: int = 1, limit: int = 10, order_by: str = "id desc", where: str = None):
+    """Get all expense categprys"""
+
+    if not where:
+        url = f"{host}/expense-categorys?limit={limit}&order_by={order_by}&page={page}"
+    else:
+        url = f"{host}/expense-categorys?limit={limit}&order_by={order_by}&page={page}&where={where}"
+
+    try:
+        response = requests.get(url)
+        data = response.json()
+        categorys = data
+    
+    except Exception as e:
+        categorys = []
+
+    return categorys
+
+def create_expense_category(new_category):
+    """Create a new expense category"""
+
+    url = f"{host}/expense-categorys/"
+    data = {
+        'description': new_category.description,
+        'show': new_category.show
+    }
+
+    try:
+        response =  requests.post(url, json= data)
+        response_data = response.json()
+        db_category = response_data
+    except Exception as e:
+        db_category = {}
+
+    return { 'expense_category': db_category}
+
+def get_expense_category_by_id(category_id):
+    """Get a expense category by id"""
+
+    url = f"{host}/expense-categorys/{category_id}"
+
+    try:
+        response = requests.get(url)
+        data = response.json()
+        category =  data
+    except:
+        category = {}
+    
+    return { "expense_category": category}
+
+def update_expense_category(new_category, category_id):
+    """Update a expense category"""
+
+    url = f"{host}/expense-categorys/{category_id}"
+    data = {
+        'description': new_category.description,
+        'show': new_category.show
+    }
+
+    try:
+        response =  requests.put(url, json= data)
+        response_data = response.json()
+        db_category= response_data
+    except Exception as e:
+        db_category = {}
+
+    return { 'expense_category': db_category}

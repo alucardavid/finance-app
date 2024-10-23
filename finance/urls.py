@@ -20,5 +20,8 @@ urlpatterns = [
     path("import-monthly-expenses/", views.import_monthly_expenses, name="import_monthly_expenses"),
     path("incomings/", views.incomings, name="incomings"),
     path("new-incoming/", views.new_incoming, name="new_incoming"),
-    path("edit-incoming/<int:incoming_id>/", views.edit_incoming, name="edit_incoming")
+    path("edit-incoming/<int:incoming_id>/", views.edit_incoming, name="edit_incoming"),
+    path("expense-categorys/", views.expense_categorys, name="expense_categorys"),
+    path("new-expense-category/", views.new_expense_category, name="new_expense_category"),
+    path("edit-expense-category/<int:category_id>/", views.edit_expense_category, name="edit_expense_category"),
 ]

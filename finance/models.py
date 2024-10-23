@@ -78,3 +78,12 @@ class Incoming(models.Model):
         managed = False
         db_table = 'incomings'
     
+class ExpenseCategory(models.Model):
+    description = models.CharField(max_length=50)
+    show = models.CharField(max_length=1)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'expense_categorys'

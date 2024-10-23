@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils.formats import localize
 from django import forms
-from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm, IncomingForm
+from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm, IncomingForm, ExpenseCategoryForm
 from .models import MonthlyExpense
 import sys, datetime, csv, requests
 from . import api
@@ -324,4 +324,67 @@ def _get_monthly_expense_pend():
 
     return total_pend
     
+def expense_categorys(request):
+    """Page to show all expense categorys"""
 
+    page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
+    limit = int(request.GET.get('limit') if request.GET.get('limit') is not None else 10)
+    where = request.GET.get('where')
+    categorys = api.get_all_expense_categorys(page, limit, "id desc", where)
+    last_page = categorys["total_pages"]
+    total_items = categorys["count"]
+    pages = []
+
+    if last_page <= 5:
+        for i in range(1, last_page+1):
+            pages.append(i)
+    else:
+        for i in range(1 if page <=5 else page - 4, 6 if page <= 5 else (page + 1)):
+            pages.append(i)
+    
+    context = { 
+        'categorys': categorys,
+        'page': page,
+        'pages': pages,
+        'prev_page': page - 1,
+        'next_page': page + 1,
+        'last_page': last_page,
+        'showing': f"{(page * limit) - (limit - 1)} a {(page * limit) if (page * limit) <= total_items else total_items } de {format(categorys['count'], ',d').replace(',', '.')}",
+        'where': where
+    }
+
+    return render(request, 'finance/expense_categorys/expense_categorys.html', context)
+
+def new_expense_category(request):
+    """Paga do add a new expense category"""
+    if request.method != "POST":
+        form = ExpenseCategoryForm()
+    else:
+        form = ExpenseCategoryForm(request.POST)
+        if form.is_valid():
+            new_category = form.save(commit=False)
+            db_new_category = api.create_expense_category(new_category)
+            return redirect('finance:expense_categorys')
+        
+    context = {"form": form}
+
+    return render(request, 'finance/expense_categorys/new_expense_category.html', context)
+
+def edit_expense_category(request, category_id):
+    """Page to edit a expense category"""
+    if request.method != "POST":
+        category = api.get_expense_category_by_id(category_id)["expense_category"]
+        form = ExpenseCategoryForm(data=category)
+    else:
+        form = ExpenseCategoryForm(request.POST)
+        if form.is_valid():
+            new_category = form.save(commit=False)
+            db_category = api.update_expense_category(new_category, category_id)
+            return redirect('finance:expense_categorys')
+        
+    context = {
+        'form': form,
+        'category': category
+    }
+
+    return render(request, 'finance/expense_categorys/edit_expense_category.html', context)
