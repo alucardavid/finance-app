@@ -45,20 +45,31 @@ class VariableExpense(models.Model):
         managed = False
         db_table = 'variable_expenses'
 
-class MonthlyExpense(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    place = models.CharField(max_length=50)
+class ExpenseCategory(models.Model):
     description = models.CharField(max_length=50)
+    show = models.CharField(max_length=1)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'expense_categorys'
+
+class MonthlyExpense(models.Model):
+
+    id = models.BigAutoField(primary_key=True)
+    place = models.CharField(max_length=50, blank=True, null=True)
+    description = models.CharField(max_length=50, blank=True, null=True)
     date = models.DateTimeField()
     amount = models.DecimalField(max_digits=15, decimal_places=2)
     total_plots = models.IntegerField(blank=True, null=True)
     current_plot = models.IntegerField(blank=True, null=True)
-    due_date = models.DateTimeField()
+    due_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField(blank=True, null=True)
-    expense_category_id = models.IntegerField(blank=True, null=True)
-    form_of_payment = models.ForeignKey(FormOfPayment, models.DO_NOTHING)
+    expense_category = models.ForeignKey(ExpenseCategory, models.DO_NOTHING, blank=True, null=True)
+    form_of_payment = models.ForeignKey(FormOfPayment, models.DO_NOTHING, blank=True, null=True)
     user_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -78,12 +89,3 @@ class Incoming(models.Model):
         managed = False
         db_table = 'incomings'
     
-class ExpenseCategory(models.Model):
-    description = models.CharField(max_length=50)
-    show = models.CharField(max_length=1)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'expense_categorys'

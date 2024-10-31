@@ -63,6 +63,7 @@
                                         <th>Data</th>
                                         <th>Local</th>
                                         <th>Descrição</th>
+                                        <th>Categoria</th>
                                         <th>Forma de Pagamento</th>
                                         <th>Valor</th>
                                         <th>Qtd Parcelas</th>
@@ -83,6 +84,7 @@
                                         <td>{{ expense.date | parse_datetime | naturalday}}</td>
                                         <td>{{ expense.place }}</td>
                                         <td><a href="{% url 'finance:edit_monthly_expense' expense.id %}">{{ expense.description }}</a></td>
+                                        <td>{{ expense.expense_categorys.description }}</td>
                                         <td>{{ expense.form_of_payments.description }}</td>
                                         <td>R$ {{ expense.amount | intcomma }}</td>
                                         <td>{{ expense.total_plots }}</td>

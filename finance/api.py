@@ -236,7 +236,7 @@ def update_monthly_expense(new_expense, expense_id):
         'total_plots': new_expense.total_plots,
         'current_plot': new_expense.current_plot,
         'form_of_payment_id': new_expense.form_of_payment.id,
-        'expense_category_id': 1
+        'expense_category_id': new_expense.expense_category.id
     }
 
     try:
@@ -342,6 +342,8 @@ def get_all_expense_categorys(page: int = 1, limit: int = 10, order_by: str = "i
     
     except Exception as e:
         categorys = []
+    
+    print(categorys)
 
     return categorys
 

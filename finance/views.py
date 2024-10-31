@@ -197,6 +197,7 @@ def edit_monthly_expense(request, monthly_expense_id):
         expense["date"] = datetime.strptime(expense["date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
         expense["due_date"] = datetime.strptime(expense["due_date"], "%Y-%m-%dT%H:%M:%S").strftime("%Y-%m-%d")
         expense["form_of_payment"] = expense["form_of_payments"]["id"]
+        expense["expense_category"] = expense["expense_categorys"]["id"]
         form = MonthlyExpenseForm(data=expense)
     else:
         post = request.POST.copy()

@@ -35,7 +35,7 @@ class VariableExpenseForm(ModelForm):
 class MonthlyExpenseForm(ModelForm):
     class Meta:
         model = MonthlyExpense
-        fields = ['date', 'place', 'description', 'form_of_payment', 'amount', 'total_plots', 'current_plot', 'due_date', 'status']
+        fields = ['date', 'place', 'description', 'form_of_payment', 'amount', 'total_plots', 'current_plot', 'due_date', 'status', 'expense_category']
         widgets = {
             'place': TextInput(attrs={'class': 'form-control'}),
             'description': TextInput(attrs={'class': 'form-control'}),
@@ -46,11 +46,18 @@ class MonthlyExpenseForm(ModelForm):
             'current_plot': NumberInput(attrs={'class': 'form-control', 'min': 1, 'step': 1, 'pattern': '[1-9]', 'value': 1}),
             'due_date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'status': Select(attrs={'class': 'form-control'}, choices=(("", "Selecione"),("Pago", "Pago"), ("Pendente", "Pendente"))),
+            'expense_category': Select(attrs={'class': 'form-control'}),
         }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        categorys = []
+
+        for category in api.get_all_expense_categorys(1, 999, order_by="description asc")["items"]:
+            categorys.append([category["id"], category["description"]])
+
         self.fields['form_of_payment'].choices =[["", "Selecione"]] + api.get_all_form_of_payments(order_by="form_of_payments.description asc")["form_of_payments"]
+        self.fields['expense_category'].choices = [["", "Selecione"]] + categorys
 
 
 class IncomingForm(ModelForm):
