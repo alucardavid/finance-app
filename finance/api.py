@@ -3,7 +3,7 @@ import sys
 import requests
 from datetime import datetime
 
-host = "http://localhost:8001"
+host = "http://localhost:7000"
 
 def get_all_balances():
     """Get all balances"""
@@ -343,8 +343,6 @@ def get_all_expense_categorys(page: int = 1, limit: int = 10, order_by: str = "i
     except Exception as e:
         categorys = []
     
-    print(categorys)
-
     return categorys
 
 def create_expense_category(new_category):

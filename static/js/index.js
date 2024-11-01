@@ -3,10 +3,12 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_month`);
     const balances = await fetch(`${HOST_API}/balances/`)
+    const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category`);
     let categories = []
     let totalExpenses = [] 
     let totalBalances = []
     let sumBalances = 0
+    let expenseCategorys = []
 
     if (balances.ok){
         let data = await balances.json()
@@ -33,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     }
 
-    const chart = Highcharts.chart('monthly-chart', {
+    const monthlyChart = Highcharts.chart('monthly-chart', {
         chart: {
             type: 'line'
         },
@@ -58,5 +60,57 @@ document.addEventListener('DOMContentLoaded', async function () {
             color: '#42f578'
         }]
     });
+
+    if (monthExpenseCategorys.ok){
+        let expenses = await monthExpenseCategorys.json();
+
+        expenses.forEach((expense) => {
+            expenseCategorys.push({
+                "name": expense.category,
+                "y": expense.total
+            })
+        })
+    }
+
+
+
+    const categoryChart = Highcharts.chart('category-chart', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Despesas Por Categoria'
+        },
+        plotOptions: {
+            series: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: [{
+                    enabled: true,
+                    distance: 20
+                }, {
+                    enabled: true,
+                    distance: -40,
+                    format: '{point.percentage:.1f}%',
+                    style: {
+                        fontSize: '1.2em',
+                        textOutline: 'none',
+                        opacity: 0.7
+                    },
+                    filter: {
+                        operator: '>',
+                        property: 'percentage',
+                        value: 10
+                    }
+                }]
+            }
+        },
+        series: [{
+            name: 'Total',
+            colorByPoint: true,
+            data: expenseCategorys
+        }]
+    });
+
 });
 
