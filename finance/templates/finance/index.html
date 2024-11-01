@@ -4,6 +4,7 @@
 
 {% block head %}
   <script src="https://code.highcharts.com/highcharts.js"></script> 
+  <script src="https://code.highcharts.com/stock/modules/stock.js"></script>
   <script src="{% static 'js/index.js' %}"></script>
 {% endblock head %}
 {% block content %}
@@ -25,42 +26,6 @@
       </div>
     </div>
     <!-- Fim Saldo Total -->
-
-    <!-- Card Total Incomings -->
-    <div class="col-md-auto">
-      <div class="card">
-        <div class="row g-0">
-          <!-- <div class="col-md-2 p-3">
-            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
-          </div> -->
-          <div class="col-md-auto">
-            <div class="card-body">
-              <h5 class="card-title">Valor a Receber</h5>
-              <h1 class="text-warning" style="font-size: 30px;">R$ {{ total_incomings | intcomma }}</h1>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Fim Total Incomings -->
-
-    <!-- Card Total Incomings + Saldo -->
-    <div class="col-md-auto">
-      <div class="card">
-        <div class="row g-0">
-          <!-- <div class="col-md-2 p-3">
-            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
-          </div> -->
-          <div class="col-md-auto">
-            <div class="card-body">
-              <h5 class="card-title">Saldo + A receber</h5>
-              <h1 class="text-warning" style="font-size: 30px;">R$ {{ balance_plus_incomings | intcomma }}</h1>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Fim Total Incomings + Saldo -->
 
     <!-- Card Saldo Total - Despesas Pendentes -->
     <div class="col-md-auto">
@@ -98,34 +63,71 @@
     </div>
     <!-- Fim Card Total despesas pendentes -->
 
-    <!-- Card Despesas proximo mes -->
-    <!-- <div class="col-md-auto">
+    <!-- Card Total Incomings -->
+    <div class="col-md-auto">
       <div class="card">
         <div class="row g-0">
-          <div class="col-md-2 p-3">
+          <!-- <div class="col-md-2 p-3">
             <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
-          </div>
-          <div class="col">
+          </div> -->
+          <div class="col-md-auto">
             <div class="card-body">
-              <h5 class="card-title">Despesas Proximo Mes</h5>
-              <h1 style="font-size: 30px;">R$ {{ total_expenses_next_month | intcomma }}</h1>
+              <h5 class="card-title">Valor a Receber</h5>
+              <h1 class="text-warning" style="font-size: 30px;">R$ {{ total_incomings | intcomma }}</h1>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div> -->
-  <!-- Fim Card Despesas proximo mes -->
+    <!-- Fim Total Incomings -->
 
-  <!-- Grafico de despesas e saldos por mes -->
-  <div class="row mt-5">
-    <div class="col-6">
-      <div id="monthly-chart" style="width:100%; height:400px;"></div>
+    <!-- Card Total Incomings + Saldo -->
+    <div class="col-md-auto">
+      <div class="card">
+        <div class="row g-0">
+          <!-- <div class="col-md-2 p-3">
+            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+          </div> -->
+          <div class="col-md-auto">
+            <div class="card-body">
+              <h5 class="card-title">Saldo + A receber</h5>
+              <h1 class="text-warning" style="font-size: 30px;">R$ {{ balance_plus_incomings | intcomma }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-6">
-      <div id="category-chart" style="width:100%; height:400px;"></div>
+    <!-- Fim Total Incomings + Saldo -->
+
+    <!-- Card Total Incomings + Balance - Expenses Pend -->
+    <div class="col-md-auto">
+      <div class="card">
+        <div class="row g-0">
+          <!-- <div class="col-md-2 p-3">
+            <img src="{% static 'img/pig-money.png' %}" class="img-fluid rounded-start" alt="...">
+          </div> -->
+          <div class="col-md-auto">
+            <div class="card-body">
+              <h5 class="card-title">Total + A Receber - Pendencias</h5>
+              <h1 class="text-warning" style="font-size: 30px;">R$ {{ balance_incomings_pend | intcomma }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <!-- Fim Grafico de despesas e saldos por mes -->
+    <!-- Fim Total Incomings + Saldo -->
+
+    
+
+    <!-- Grafico de despesas e saldos por mes -->
+    <div class="row mt-5">
+      <div class="col-6">
+        <div id="monthly-chart" style="width:100%; height:400px;"></div>
+      </div>
+      <div class="col-6">
+        <div id="category-chart" style="width:100%; height:400px;"></div>
+      </div>
+    </div>
+    <!-- Fim Grafico de despesas e saldos por mes -->
 
 {% endblock content %}

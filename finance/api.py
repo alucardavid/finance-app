@@ -3,7 +3,7 @@ import sys
 import requests
 from datetime import datetime
 
-host = "http://localhost:7000"
+host = "http://localhost:8001"
 
 def get_all_balances():
     """Get all balances"""
@@ -199,7 +199,7 @@ def create_monthly_expense(new_expense):
         'total_plots': new_expense.total_plots,
         'current_plot': new_expense.current_plot,
         'form_of_payment_id': new_expense.form_of_payment.id,
-        'expense_category_id': 1
+        'expense_category_id': new_expense.expense_category.id  
     }
 
     try:

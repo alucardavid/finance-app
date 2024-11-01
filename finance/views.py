@@ -29,6 +29,7 @@ def index(request):
         'total_balances_min_expenses': total_balances - total_monthly_expenses_pend,
         'total_incomings': total_incomings,
         'balance_plus_incomings': total_balances + total_incomings,
+        'balance_incomings_pend': total_balances + total_incomings - total_monthly_expenses_pend,
     }
 
 
@@ -231,7 +232,8 @@ def import_monthly_expenses(request):
                     total_plots = line[4],
                     current_plot = line[5],
                     due_date = datetime.strptime(line[6], '%Y-%m-%d').date(),
-                    form_of_payment_id = line[7].replace('\r', '')
+                    form_of_payment_id = line[7],
+                    expense_category_id = line[8].replace('\r', '')
                 )
                 
                 expenses_imported.append(api.create_monthly_expense(expense))
