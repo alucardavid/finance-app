@@ -53,6 +53,10 @@
                     <label for="form_of_payment" class="form-label">Forma de Pagamento</label>
                     {{ form.form_of_payment }}
                 </div> 
+                <div class="mb-4">
+                    <label for="status" class="form-label">Status</label>
+                    {{ form.status }}
+                </div> 
                 <button type="submit" class="btn btn-primary">Salvar</button>
                 <a class="btn btn-danger" href="{% url 'finance:monthly_expenses' %}" role="button">Cancelar</a>
             </form>
