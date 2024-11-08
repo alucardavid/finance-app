@@ -3,13 +3,14 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_month`);
     const balances = await fetch(`${HOST_API}/balances/`)
-    const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category`);
+    const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&where=2024-12`);
+    const incomings = await fetch(`${HOST_API}/incomings?type_return=grouped_by_month`);
     let categories = []
     let totalExpenses = [] 
     let totalBalances = []
     let sumBalances = 0
     let expenseCategorys = []
-
+    
     if (balances.ok){
         let data = await balances.json()
 
@@ -22,12 +23,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     if (monthlyExpenses.ok) {
         let expenses = await monthlyExpenses.json();
+        let jsonIncomings = await incomings.json()
         let tmpBalance = sumBalances
 
         expenses.forEach((expense, index) => {
             
-            tmpBalance -= parseInt((index > 0 ? expense.total : 0))
-
+            tmpBalance -= parseInt((index > 0 ? expense.total : 0)) 
+            tmpBalance += (jsonIncomings[index] != undefined ? jsonIncomings[index].total : 0)
             categories.push(expense.ano_mes)
             totalExpenses.push(expense.total)
             totalBalances.push(parseInt(tmpBalance))
@@ -48,6 +50,15 @@ document.addEventListener('DOMContentLoaded', async function () {
         yAxis: {
             title: {
                 text: 'Valor R$'
+            }
+        },
+        plotOptions:{
+            series: {
+                events: {
+                    click: function(e) {
+                        console.log(this)
+                    }
+                }
             }
         },
         series: [{
@@ -71,8 +82,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             })
         })
     }
-
-
 
     const categoryChart = Highcharts.chart('category-chart', {
         chart: {
