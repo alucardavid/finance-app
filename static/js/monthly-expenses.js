@@ -14,6 +14,22 @@ function deleteExpenses(event, target){
     }
 }
 
+function payExpenses(event, target){
+    let expensesSelected = document.querySelectorAll('input[type="checkbox"]:checked')
+    let promises = []
+
+    expensesSelected.forEach((element) => {
+        promises.push(fetch(`${HOST_API}/monthly-expenses/pay/${element.id}/`, {method: 'PUT'}))
+    })
+
+    if (promises.length > 0) {
+        Promise.all(promises)
+            .then(body => {
+                window.location.reload()
+            })
+    }
+}
+
 function updateQueryParameters(page){
     let url = window.location.href.split("?")
     limit = document.getElementById('limit')
@@ -111,4 +127,19 @@ function closeAlert(event, target){
         alertDiv.style.display = "none"
     }, 600);
 
+}
+
+function checkDeleteBtn(event, target){
+    let countCheck = document.querySelectorAll('input[type="checkbox"]:checked').length
+    let deleteBtn = document.getElementById("delete-expenses")
+    let payBtn = document.getElementById("pay-expenses")
+
+    if (countCheck > 0 ){
+        deleteBtn.classList.remove("disabled")
+        payBtn.classList.remove("disabled")
+    }
+    else {
+        deleteBtn.classList.add("disabled")
+        payBtn.classList.add("disabled")
+    }
 }

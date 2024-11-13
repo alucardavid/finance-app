@@ -17,7 +17,8 @@
     <div class="row">
         <div class="col-12" style="height: 50px;">
             <a class="btn btn-primary" href="{% url 'finance:new_monthly_expense' %}" role="button">Novo</a>
-            <button type="button" class="btn btn-danger" onclick="deleteExpenses(event, this)">Excluir</button>
+            <button type="button" class="btn btn-danger disabled" onclick="deleteExpenses(event, this)" id="delete-expenses">Excluir</button>
+            <button type="button" class="btn btn-info disabled" id="pay-expenses" onclick="payExpenses(event, this)">Pagar</button>
             <button class="btn btn-secondary disabled" id="upload-csv" onclick="importExpenses(event, this)">
                 <span id="btn-upload-csv-label">Importar CSV</span>
                 <span class="spinner-border spinner-border-sm d-none" id="spinner-upload-csv" role="status" aria-hidden="true"></span>
@@ -78,7 +79,7 @@
                                     <tr>
                                         <td>
                                             <div>
-                                                <input class="form-check-input" type="checkbox" id="{{ expense.id }}" value="" aria-label="...">
+                                                <input class="form-check-input" type="checkbox" id="{{ expense.id }}" value="" aria-label="..." onclick="checkDeleteBtn(event, this)">
                                             </div>
                                         </td>
                                         <td>{{ expense.date | parse_datetime | naturalday}}</td>
