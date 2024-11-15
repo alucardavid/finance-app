@@ -4,6 +4,7 @@
 {% block head %}
 {% load static %}
     <script  src="{% static 'js/utils.js' %}"></script>
+    <script  src="{% static 'js/new-monthly-expense.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
@@ -28,6 +29,7 @@
                 <div class="mb-3">
                     <label for="description" class="form-label">Descrição</label>
                     {{ form.description }}
+                    <datalist id="descriptionsList"></datalist>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Categoria</label>

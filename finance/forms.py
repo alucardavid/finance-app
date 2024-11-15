@@ -38,7 +38,7 @@ class MonthlyExpenseForm(ModelForm):
         fields = ['date', 'place', 'description', 'form_of_payment', 'amount', 'total_plots', 'current_plot', 'due_date', 'status', 'expense_category']
         widgets = {
             'place': TextInput(attrs={'class': 'form-control'}),
-            'description': TextInput(attrs={'class': 'form-control'}),
+            'description': TextInput(attrs={'class': 'form-control', 'list': 'descriptionsList', 'onkeydown': 'updateDescriptionList(event, this)'}),
             'form_of_payment': Select(attrs={'class': 'form-control'}),
             'amount': TextInput(attrs={'class': 'form-control', 'onkeydown': 'checkNumberKey(event, this)', 'onload': 'console.log("onload")'}),
             'date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
