@@ -4,7 +4,7 @@
 {% block head %}
 {% load static %}
     <script  src="{% static 'js/utils.js' %}"></script>
-    <script  src="{% static 'js/edit-variable-expense.js' %}"></script>
+    <script  src="{% static 'js/new-variable-expense.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
@@ -25,10 +25,12 @@
                 <div class="mb-3">
                     <label for="place" class="form-label">Local</label>
                     {{ form.place }}
+                    <datalist id="placesList"></datalist>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Descrição</label>
                     {{ form.description }}
+                    <datalist id="descriptionsList"></datalist>
                 </div>
                 <div class="mb-3">
                     <label for="form_of_payment" class="form-label">Forma de Pagamento</label>

@@ -20,8 +20,8 @@ class VariableExpenseForm(ModelForm):
         model = VariableExpense
         fields = ['place', 'description', 'date', 'amount', 'type', 'form_of_payment']
         widgets = {
-            'place': TextInput(attrs={'class': 'form-control'}),
-            'description': TextInput(attrs={'class': 'form-control'}),
+            'place': TextInput(attrs={'class': 'form-control', 'list': 'placesList', 'onkeyup': 'updatePlacesList(event, this)'}),
+            'description': TextInput(attrs={'class': 'form-control', 'list': 'descriptionsList', 'onkeyup': 'updateDescriptionsList(event, this)'}),
             'form_of_payment': Select(attrs={'class': 'form-control'}),
             'type': Select(attrs={'class': 'form-control'}, choices=(("", "Selecione"),("Despesa", "Despesa"), ("Receita", "Receita"))),
             'amount': TextInput(attrs={'class': 'form-control', 'onkeydown': 'checkNumberKey(event, this)', 'onload': 'console.log("onload")'}),
