@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker Login
+        uses: docker/login-action@v3.3.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build the Docker image
+        run: |
+          docker build . --file Dockerfile --tag dpereira99/finance-app:latest
+          docker tag dpereira99/finance-app:latest dpereira99/finance-app:$(date +%s)
+          docker push dpereira99/finance-app

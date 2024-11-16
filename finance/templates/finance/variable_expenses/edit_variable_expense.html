@@ -4,11 +4,11 @@
 {% block head %}
 {% load static %}
     <script  src="{% static 'js/utils.js' %}"></script>
-    <script  src="{% static 'js/new-variable-expense.js' %}"></script>
+    <script  src="{% static 'js/edit-variable-expense.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
-    <h3>Nova Despesa Variavel</h3>
+    <h3>Editar Despesa Variavel</h3>
     <div class="container row">
         <div class="col-sm-12 col-xs-12 col-lg-6">
             {% if form.errors %}
@@ -16,7 +16,7 @@
                     {{ form.errors }}
                 </div>
             {% endif %}
-            <form action="{% url 'finance:new_variable_expense' %}" method="post">
+            <form action="{% url 'finance:edit_variable_expense' expense.id%}" method="post">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="date" class="form-label">Data</label>
@@ -25,12 +25,10 @@
                 <div class="mb-3">
                     <label for="place" class="form-label">Local</label>
                     {{ form.place }}
-                    <datalist id="placesList"></datalist>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Descrição</label>
                     {{ form.description }}
-                    <datalist id="descriptionsList"></datalist>
                 </div>
                 <div class="mb-3">
                     <label for="form_of_payment" class="form-label">Forma de Pagamento</label>

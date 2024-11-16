@@ -4,14 +4,20 @@
 
 {% block head %}
 {% load static %}
-    <script  src="{% static 'js/variable-expenses.js' %}"></script>
+    <!-- <script  src="{% static 'js/monthly-expenses.js' %}"></script> -->
+    <script  src="{% static 'js/alerta.js' %}"></script>
+    <script  src="{% static 'js/incomings.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/alerta.css' %}">
 {% endblock head %}
 
-
 {% block content %}
+    <div class="alerta" id="alerta">
+        <span class="closebtn" onclick="closeAlert()">&times;</span> 
+        <span id="alerta-label"></span>
+    </div>
     <div class="row">
         <div class="col-12" style="height: 50px;">
-            <a class="btn btn-primary" href="{% url 'finance:new_variable_expense' %}" role="button">Novo</a>
+            <a class="btn btn-primary" href="{% url  'finance:new_incoming' %}" role="button">Novo</a>
             <button type="button" class="btn btn-danger" onclick="deleteExpenses(event, this)">Excluir</button>
         </div>
     </div>
@@ -19,15 +25,15 @@
         <div class="col-sm-12 col-xs-12 col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Despesas Variaveis</h5>
+                    <h5 class="card-title mb-10">Receita Futura</h5>
                     <div class="row mt-3 mb-3">
                         <div class="col-sm-3 col-xs-3 col-lg-2">
                             <label for="page"> Items por pagina</label>
                             <select class="form-control form-control-sm" style="width: auto; display: inline-block; appearance: auto;" onchange="updateQueryParameters()"  id="limit">
-                                <option {% if variable_expenses.limit == 10 %} selected {% endif %} >10</option>
-                                <option {% if variable_expenses.limit == 25 %} selected {% endif %} >25</option>
-                                <option {% if variable_expenses.limit == 50 %} selected {% endif %} >50</option>
-                                <option {% if variable_expenses.limit == 100 %} selected {% endif %} >100</option>
+                                <option {% if incomings.limit == 10 %} selected {% endif %} >10</option>
+                                <option {% if incomings.limit == 25 %} selected {% endif %}>25</option>
+                                <option {% if incomings.limit == 50 %} selected {% endif %}>50</option>
+                                <option {% if incomings.limit == 100 %} selected {% endif %}>100</option>
                             </select>
                         </div>
                         <div class="col-sm-9 col-xs-9 col-lg-10">
@@ -39,47 +45,49 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Row to table -->
                     <div class="row">
                         <div class="col-sm-12 col-xs-12 col-lg-12 table-responsive-sm">
-                            <table class="table table-hover table-sm">
+                            <table class="table table-hover table-sm mt-3">
                                 <thead>
                                     <tr>
                                         <th></th>
                                         <th>Data</th>
-                                        <th>Local</th>
                                         <th>Descrição</th>
-                                        <th>Forma de Pagamento</th>
-                                        <th>Tipo</th>
                                         <th>Valor</th>
+                                        <th>Fonte</th>
+                                        <th>Status</th>
+                                        <th>Criado em</th>
                                         <th>Atualizado em</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {% for expense in variable_expenses.items %}
+                                {% for incoming in incomings.items %}
                                     <tr>
                                         <td>
                                             <div>
-                                                <input class="form-check-input" type="checkbox" id="{{ expense.id }}" value="" aria-label="...">
+                                                <input class="form-check-input" type="checkbox" id="{{ incoming.id }}" value="" aria-label="...">
                                             </div>
                                         </td>
-                                        <td>{{ expense.date | parse_datetime | naturalday}}</td>
-                                        <td>{{ expense.place }}</td>
-                                        <td><a href="{% url 'finance:edit_variable_expense' expense.id %}">{{ expense.description }}</a></td>
-                                        <td>{{ expense.form_of_payments.description }}</td>
-                                        <td>{{ expense.type }}</td>
-                                        <td>R$ {{ expense.amount | intcomma }}</td>
-                                        {% if expense.updated_at != null %}
-                                            <td>{{ expense.updated_at | parse_datetime | naturaltime }}</td>
+                                        <td>{{ incoming.date | parse_datetime | naturalday}}</td>
+                                        <td><a href="{% url 'finance:edit_incoming' incoming.id %}">{{ incoming.description }}</a></td>
+                                        <td>R$ {{ incoming.amount | intcomma }}</td>
+                                        <td>{{ incoming.source }}</td>
+                                        <td>{{ incoming.status }}</td>
+                                        <td>{{ incoming.created_at | parse_datetime | naturalday}}</td>
+                                        {% if incoming.updated_at != null %}
+                                            <td>{{ incoming.updated_at | parse_datetime | naturaltime }}</td>
                                         {% else %}
                                             <td></td>
                                         {% endif %}
-                                        
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <!-- End of line to table -->
+
                     <!-- Row to pagination -->
                     <div class="row">
                         <div class="col-sm-6 col-xs-6 col-lg-6">
@@ -89,27 +97,27 @@
                             <nav aria-label="pagination" class="float-end">
                                 <ul class="pagination">
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:variable_expenses' %}?limit={{ variable_expenses.limit }}&page=1{% if where != None %}&where={{ where }}{% endif %}" aria-label="First">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters(1)" aria-label="First">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:variable_expenses' %}?limit={{ variable_expenses.limit }}&page={{ prev_page }}{% if where != None %}&where={{ where }}{% endif %}" aria-label="Previous">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters('{{prev_page}}')" aria-label="Previous">
                                         <span aria-hidden="true">&lsaquo;</span>
                                         </a>
                                     </li>
                                     {% for npage in pages %}
                                         <li class="page-item {% if npage == page %}active{% endif %} ">
                                             <a class="page-link" 
-                                               href="{% url 'finance:variable_expenses' %}?limit={{ variable_expenses.limit }}&page={{ npage }}{% if where != None %}&where={{ where }}{% endif %}">{{ npage }}</a></li>
+                                               href="#" onclick="updateQueryParameters('{{ npage }}')">{{ npage }}</a></li>
                                     {% endfor %}
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:variable_expenses' %}?limit={{ variable_expenses.limit }}&page={{ next_page }}{% if where != None %}&where={{ where }}{% endif %}" aria-label="Next">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters('{{next_page}}')" aria-label="Next">
                                             <span aria-hidden="true">&rsaquo;</span>
                                         </a>
                                     </li>
                                     <li class="page-item {% if page == last_page %}disabled{% endif %}">
-                                        <a class="page-link" href="{% url 'finance:variable_expenses' %}?limit={{ variable_expenses.limit }}&page={{ last_page }}{% if where != None %}&where={{ where }}{% endif %}" aria-label="Last">
+                                        <a class="page-link" href="#" onclick="updateQueryParameters('{{last_page}}')" aria-label="Last">
                                         <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>

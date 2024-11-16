@@ -1,6 +1,9 @@
 {% extends 'finance/base.html' %}
-
 {% load humanize %}
+{% block head %}
+{% load static %}
+    <script  src="{% static 'js/utils.js' %}"></script>
+{% endblock head %}
 
 {% block content %}
     <h3>Novo Saldo</h3>
