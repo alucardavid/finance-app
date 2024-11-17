@@ -2,8 +2,9 @@
 import sys
 import requests
 from datetime import datetime
+import os
 
-host = "http://172.19.0.3"
+host = os.getenv("API_HOST")
 
 def get_all_balances():
     """Get all balances"""

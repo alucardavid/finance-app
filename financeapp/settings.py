@@ -14,7 +14,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv, dotenv_values
 
-load_dotenv()
+if os.getenv("FINANCEENV") == "dsv":
+    load_dotenv("./.env.local")
+else:
+    load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
