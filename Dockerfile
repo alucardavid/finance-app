@@ -1,5 +1,7 @@
 FROM python:3.10
 
+ENV FINANCEENV="prd"
+
 WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
