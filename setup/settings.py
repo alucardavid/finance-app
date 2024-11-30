@@ -15,9 +15,9 @@ from pathlib import Path
 from dotenv import load_dotenv, dotenv_values
 
 if os.getenv("FINANCEENV") == "dsv":
-    load_dotenv("./.env.local")
+    load_dotenv("./.env.local", override=True)
 else:
-    load_dotenv()
+    load_dotenv(override=True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -66,7 +66,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'financeapp.urls'
+ROOT_URLCONF = 'setup.urls'
 
 TEMPLATES = [
     {
@@ -84,7 +84,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'financeapp.wsgi.application'
+WSGI_APPLICATION = 'setup.wsgi.application'
 
 
 # Database
