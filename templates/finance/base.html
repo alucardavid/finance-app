@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Finance App</title>
+
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% load static %}
+    <script  src="{% static 'js/helpers.js' %}"></script>
+    
+    {% block head %}{% endblock head %}
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4 border">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'finance:index' %}">Finance App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarCollapse" aria-controls="navbarCollapse"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+             <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'finance:balances' %}">Saldos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'finance:variable_expenses' %}">Despesa Variavel</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'finance:monthly_expenses' %}">Despesa Mensal</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'finance:incomings' %}">Receitas Futuras</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'finance:expense_categorys' %}">Categorias</a></li>
+                </ul> <!-- End of links on left side of navbar -->
+                <!-- Account-related links -->
+                <ul class="navbar-nav ms-auto mb-2 mb-md-0">    
+                    
+
+                </ul><!-- End of account-related links -->
+                
+            </div> <!-- Closes collapsible parts of navbar -->
+        </div> <!-- Closes navbar's container -->
+    </nav> <!-- End of navbar -->
+
+    <main class="container-fluid">
+        {% block content %}{% endblock content %}
+    </main>
+    
+</body>
+</html>

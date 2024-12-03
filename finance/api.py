@@ -178,6 +178,7 @@ def get_all_monthly_expenses(page:int = 1, limit: int = 10, order_by: str = "mon
         else:
             url = f"{host}/monthly-expenses?limit={limit}&order_by={order_by}&page={page}&due_date={due_date}&where={where}"
 
+    print(url)
     try:
         response = requests.get(url)
         data = response.json()
