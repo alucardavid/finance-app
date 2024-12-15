@@ -1,9 +1,10 @@
 
 
 document.addEventListener('DOMContentLoaded', async function () {
+    const monthFilter = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`
     const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_month`);
     const balances = await fetch(`${HOST_API}/balances/`)
-    const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&where=2024-12`);
+    const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&where=${monthFilter}`);
     const incomings = await fetch(`${HOST_API}/incomings?type_return=grouped_by_month`);
     let categories = []
     let totalExpenses = [] 
@@ -88,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             type: 'pie'
         },
         title: {
-            text: 'Despesas Por Categoria'
+            text: `Despesas Por Categoria - ${monthFilter}`
         },
         plotOptions: {
             series: {
@@ -121,5 +122,123 @@ document.addEventListener('DOMContentLoaded', async function () {
         }]
     });
 
+    
+    createPlacesChart(monthFilter)
+
 });
 
+
+async function createPlacesChart(monthFilter){
+    const monthlyExpensePlaces = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_place&where=${monthFilter}`);
+    let expensesPlace = []
+
+    if (monthlyExpensePlaces.ok){
+        let expenses = await monthlyExpensePlaces.json();
+
+        expenses.forEach((expense) => {
+            expensesPlace.push({
+                "name": expense.place,
+                "y": expense.total
+            })
+        })
+    }
+
+    const placeChart = Highcharts.chart('place-chart', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: `Despesas Por Lugar - ${monthFilter}`
+        },
+        plotOptions: {
+            series: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: [{
+                    enabled: true,
+                    distance: 20
+                }, {
+                    enabled: true,
+                    distance: -40,
+                    format: '{point.percentage:.1f}%',
+                    style: {
+                        fontSize: '1.2em',
+                        textOutline: 'none',
+                        opacity: 0.7
+                    },
+                    filter: {
+                        operator: '>',
+                        property: 'percentage',
+                        value: 10
+                    }
+                }]
+            }
+        },
+        series: [{
+            name: 'Total',
+            colorByPoint: true,
+            data: expensesPlace
+        }]
+    });
+}
+
+async function updateCharts(event, target){
+    let monthFilter = target.value
+
+    updatePlaceChart(monthFilter)
+    updateCategoryChart(monthFilter)
+
+}
+
+async function updateCategoryChart(monthFilter){
+    let monthlyExpenseCategory = Object
+    const categoryChart = Highcharts.charts[1]
+    let expensesCategory = []
+    
+    if (monthFilter == ''){
+        monthFilter = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`
+    }
+
+    monthlyExpenseCategory = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&where=${monthFilter}`);
+    
+    if (monthlyExpenseCategory.ok){
+        let expenses = await monthlyExpenseCategory.json();
+
+        expenses.forEach((expense) => {
+            expensesCategory.push({
+                "name": expense.category,
+                "y": expense.total
+            })
+        })
+    }
+
+    categoryChart.setTitle({text: `Despesas Por Categoria - ${monthFilter}`})
+    categoryChart.series[0].setData(expensesCategory)
+}
+
+async function updatePlaceChart(monthFilter){
+    let monthlyExpensePlaces = Object
+    const placeChart = Highcharts.charts[2]
+    let expensesPlace = []
+    
+    if (monthFilter == ''){
+        monthFilter = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`
+    }
+
+    monthlyExpensePlaces = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_place&where=${monthFilter}`);
+    
+    if (monthlyExpensePlaces.ok){
+        let expenses = await monthlyExpensePlaces.json();
+
+        expenses.forEach((expense) => {
+            expensesPlace.push({
+                "name": expense.place,
+                "y": expense.total
+            })
+        })
+    }
+
+    placeChart.setTitle({text: `Despesas Por Lugar - ${monthFilter}`})
+    placeChart.series[0].setData(expensesPlace)
+
+}
