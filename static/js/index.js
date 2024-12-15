@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_month`);
     const balances = await fetch(`${HOST_API}/balances/`)
     const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&where=${monthFilter}`);
+
     const incomings = await fetch(`${HOST_API}/incomings?type_return=grouped_by_month`);
     let categories = []
     let totalExpenses = [] 
