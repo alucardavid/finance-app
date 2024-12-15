@@ -8,7 +8,7 @@
   <script src="{% static 'js/index.js' %}"></script>
 {% endblock head %}
 {% block content %}
-  <div class="row justify-content-center">
+  <div class="row">
     <!-- Card Saldo Total -->
     <div class="col-md-auto">
       <div class="card">
@@ -116,27 +116,18 @@
       </div>
     </div>
     <!-- Fim Total Incomings + Saldo -->
-  </div>
 
-  <div class="row mt-5 justify-content-right">
-    <div class="col-12">
-      <label for="month_filter" class="form-label">Filtro</label>
-      <input type="month" placeholder="yyyy-mm" class="form-control form-control-sm" id="month_filter" style="width: auto; display: inline-block;" onchange="updateCharts(event, this)" />
-    </div>
-  </div>
+    
 
-  <!-- Grafico de despesas e saldos por mes -->
-  <div class="row mt-5">
-    <div class="col-4">
-      <div id="monthly-chart" style="width:100%; height:400px;"></div>
+    <!-- Grafico de despesas e saldos por mes -->
+    <div class="row mt-5">
+      <div class="col-6">
+        <div id="monthly-chart" style="width:100%; height:400px;"></div>
+      </div>
+      <div class="col-6">
+        <div id="category-chart" style="width:100%; height:400px;"></div>
+      </div>
     </div>
-    <div class="col-4">
-      <div id="category-chart" style="width:100%; height:400px;"></div>
-    </div>
-    <div class="col-4">
-      <div id="place-chart" style="width:100%; height:400px;"></div>
-    </div>
-  </div>
-  <!-- Fim Grafico de despesas e saldos por mes -->
+    <!-- Fim Grafico de despesas e saldos por mes -->
 
 {% endblock content %}
