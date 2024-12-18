@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 def index(request):
     """The home page for Finance App"""
     balances = api.get_all_balances()["balances"]
-    total_monthly_expenses_pend = _get_monthly_expense_pend()
+    total_monthly_expenses_pend = _get_monthly_expense_pend(request)
     expenses_next_month = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+timedelta(days=30)).strftime("%Y-%m"), where="Pendente")["items"]
     pending_incomings = api.get_all_incomings(1, 999,'Pendente')["items"]
 
@@ -330,7 +330,7 @@ def edit_incoming(request, incoming_id):
     return render(request, 'finance/incomings/edit_incoming.html', context)
 
 @login_required
-def _get_monthly_expense_pend():
+def _get_monthly_expense_pend(request):
     """Retrive monthly expenses to show on index page"""
     monthly_expenses = api.get_all_monthly_expenses(page=1, limit=999, due_date=datetime.today().strftime("%Y-%m"), where="Pendente")["items"]
 
