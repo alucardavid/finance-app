@@ -44,6 +44,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     # My apps.
     'finance',
+    'users',
     # Third party apps.
     'django_bootstrap5',
     'django.contrib.admin',
@@ -152,4 +153,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Authentication
 
+LOGIN_URL = '/users/login'

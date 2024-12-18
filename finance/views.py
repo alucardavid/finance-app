@@ -4,17 +4,18 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.utils.formats import localize
 from django import forms
+from django.contrib.auth.decorators import login_required
 from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm, IncomingForm, ExpenseCategoryForm
 from .models import MonthlyExpense
 import sys, datetime, csv, requests
 from . import api
 from datetime import datetime, timedelta
 
-
+@login_required
 def index(request):
     """The home page for Finance App"""
     balances = api.get_all_balances()["balances"]
-    total_monthly_expenses_pend = _get_monthly_expense_pend()
+    total_monthly_expenses_pend = _get_monthly_expense_pend(request)
     expenses_next_month = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+timedelta(days=30)).strftime("%Y-%m"), where="Pendente")["items"]
     pending_incomings = api.get_all_incomings(1, 999,'Pendente')["items"]
 
@@ -35,12 +36,14 @@ def index(request):
 
     return render(request, 'finance/index.html', context)
 
+@login_required
 def balances(request):
     """Page to show all balances"""
     context = api.get_all_balances()
         
     return render(request, 'finance/balances/balances.html', context)
 
+@login_required
 def edit_balance(request, balance_id):
     """Edit a balance """
     if request.method != "POST":
@@ -59,6 +62,7 @@ def edit_balance(request, balance_id):
 
     return render(request, 'finance/balances/edit_balance.html', context)
 
+@login_required
 def new_balance(request):
     """Create a new balance"""
     if request.method != "POST":
@@ -76,6 +80,7 @@ def new_balance(request):
     context = {'form': form}
     return render(request, 'finance/balances/new_balance.html', context)
 
+@login_required
 def variable_expenses(request):
     """Show all variable expenses"""
     page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
@@ -107,6 +112,7 @@ def variable_expenses(request):
 
     return render(request, 'finance/variable_expenses/variable_expenses.html', context)
 
+@login_required
 def new_variable_expense(request):
     """Create a new variable expense"""
     if request.method != "POST":
@@ -123,6 +129,7 @@ def new_variable_expense(request):
     context = {'form': form}
     return render(request, 'finance/variable_expenses/new_variable_expense.html', context)
 
+@login_required
 def edit_variable_expense(request, variable_expense_id):
     """Edit a variable expense"""
     if request.method != "POST":
@@ -142,6 +149,7 @@ def edit_variable_expense(request, variable_expense_id):
     context = {'form': form, 'expense': variable_expense}
     return render(request, 'finance/variable_expenses/edit_variable_expense.html', context)
 
+@login_required
 def monthly_expenses(request):
     """Get all monthly expenses"""
     page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
@@ -174,6 +182,7 @@ def monthly_expenses(request):
     }
     return render(request, 'finance/monthly_expenses/monthly_expenses.html', context)
 
+@login_required
 def new_monthly_expense(request):
     """Create a new monthly expense"""
     if request.method != "POST":
@@ -191,6 +200,7 @@ def new_monthly_expense(request):
     context = {'form': form}
     return render(request, 'finance/monthly_expenses/new_monthly_expense.html', context)
 
+@login_required
 def edit_monthly_expense(request, monthly_expense_id):
     """Edit a monthly expense"""
     if request.method != "POST":
@@ -212,6 +222,7 @@ def edit_monthly_expense(request, monthly_expense_id):
     context = {'form': form, 'expense': expense}
     return render(request, 'finance/monthly_expenses/edit_monthly_expense.html', context)
 
+@login_required
 def import_monthly_expenses(request):
     """Import expenses from csv file"""
     file_data = request.FILES['file'].read().decode('utf-8')
@@ -243,6 +254,7 @@ def import_monthly_expenses(request):
         
     return HttpResponse("Expenses was imported with success.")
 
+@login_required
 def incomings(request):
     """Page to show all incomings"""
     page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
@@ -275,6 +287,7 @@ def incomings(request):
 
     return render(request, 'finance/incomings/incomings.html', context)
 
+@login_required
 def new_incoming(request):
     """Page to add new incoming"""
     if request.method != "POST":
@@ -293,6 +306,7 @@ def new_incoming(request):
 
     return render(request, 'finance/incomings/new_incoming.html', context)
 
+@login_required
 def edit_incoming(request, incoming_id):
     """Page to edit a incoming"""
     if request.method != "POST":
@@ -315,7 +329,8 @@ def edit_incoming(request, incoming_id):
 
     return render(request, 'finance/incomings/edit_incoming.html', context)
 
-def _get_monthly_expense_pend():
+@login_required
+def _get_monthly_expense_pend(request):
     """Retrive monthly expenses to show on index page"""
     monthly_expenses = api.get_all_monthly_expenses(page=1, limit=999, due_date=datetime.today().strftime("%Y-%m"), where="Pendente")["items"]
 
@@ -326,7 +341,8 @@ def _get_monthly_expense_pend():
         total_pend = round(sum(expense["amount"] for expense in monthly_expenses))
 
     return total_pend
-    
+
+@login_required
 def expense_categorys(request):
     """Page to show all expense categorys"""
 
@@ -358,6 +374,7 @@ def expense_categorys(request):
 
     return render(request, 'finance/expense_categorys/expense_categorys.html', context)
 
+@login_required
 def new_expense_category(request):
     """Paga do add a new expense category"""
     if request.method != "POST":
@@ -373,6 +390,7 @@ def new_expense_category(request):
 
     return render(request, 'finance/expense_categorys/new_expense_category.html', context)
 
+@login_required
 def edit_expense_category(request, category_id):
     """Page to edit a expense category"""
     if request.method != "POST":
