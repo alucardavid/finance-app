@@ -1,17 +1,34 @@
 
 
 document.addEventListener('DOMContentLoaded', async function () {
-    const monthFilter = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`
+    const currentDate = new Date()
+    let monthFilter = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}`
+    const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?due_date=${monthFilter}&where=Pendente&type_return=grouped_by_place`);
+    let expenses = await monthlyExpenses.json()
+    let filterInput = document.getElementById('month_filter')
+
+    if (expenses.length == 0) {
+        currentDate.setMonth(currentDate.getMonth() + 1)
+        monthFilter = `${currentDate.getFullYear()}-${(currentDate.getUTCMonth() + 1).toString().length == 1 ? '0' + (currentDate.getUTCMonth() + 1) : (currentDate.getUTCMonth() + 1) }`
+    }
+    
+    filterInput.value = monthFilter
+
+    createMonthlyChart()
+    createCategoryChart(monthFilter)    
+    createPlacesChart(monthFilter)
+
+});
+
+async function createMonthlyChart(){
     const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_month`);
     const balances = await fetch(`${HOST_API}/balances/`)
-    const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&where=${monthFilter}`);
     const incomings = await fetch(`${HOST_API}/incomings?type_return=grouped_by_month`);
     let categories = []
     let totalExpenses = [] 
     let totalBalances = []
     let sumBalances = 0
-    let expenseCategorys = []
-    
+        
     if (balances.ok){
         let data = await balances.json()
 
@@ -23,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     if (monthlyExpenses.ok) {
-        let expenses = await monthlyExpenses.json();
+        let expenses = await monthlyExpenses.json()
         let jsonIncomings = await incomings.json()
         let tmpBalance = sumBalances
 
@@ -72,6 +89,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             color: '#42f578'
         }]
     });
+}
+
+async function createCategoryChart(monthFilter){
+    const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&where=${monthFilter}`);
+    let expenseCategorys = []
 
     if (monthExpenseCategorys.ok){
         let expenses = await monthExpenseCategorys.json();
@@ -121,12 +143,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             data: expenseCategorys
         }]
     });
-
-    
-    createPlacesChart(monthFilter)
-
-});
-
+}   
 
 async function createPlacesChart(monthFilter){
     const monthlyExpensePlaces = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_place&where=${monthFilter}`);
@@ -192,7 +209,7 @@ async function updateCharts(event, target){
 
 async function updateCategoryChart(monthFilter){
     let monthlyExpenseCategory = Object
-    const categoryChart = Highcharts.charts[1]
+    const categoryChart = Highcharts.charts.find((element) => element.renderTo.id == 'category-chart')
     let expensesCategory = []
     
     if (monthFilter == ''){
@@ -218,7 +235,7 @@ async function updateCategoryChart(monthFilter){
 
 async function updatePlaceChart(monthFilter){
     let monthlyExpensePlaces = Object
-    const placeChart = Highcharts.charts[2]
+    const placeChart = Highcharts.charts.find((element) => element.renderTo.id == 'place-chart')
     let expensesPlace = []
     
     if (monthFilter == ''){
