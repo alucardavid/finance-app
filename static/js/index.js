@@ -2,8 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', async function () {
     const currentDate = new Date()
-    let monthFilter = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}`
-    const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?due_date=${monthFilter}&where=Pendente&type_return=grouped_by_place`);
+    let monthFilter = getYearMonthNow()
+    const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?due_date=${monthFilter}&status=Pendente&type_return=grouped_by_place`);
     let expenses = await monthlyExpenses.json()
     let filterInput = document.getElementById('month_filter')
 
@@ -257,5 +257,18 @@ async function updatePlaceChart(monthFilter){
 
     placeChart.setTitle({text: `Despesas Por Lugar - ${monthFilter}`})
     placeChart.series[0].setData(expensesPlace)
+
+}
+
+function getYearMonthNow(){
+    const currentDate = new Date()
+    year = currentDate.getFullYear()
+    month = currentDate.getMonth() + 1
+
+    if (month < 10) {
+        month = `0${month}`
+    }
+
+    return `${year}-${month}`
 
 }
