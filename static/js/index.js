@@ -92,7 +92,7 @@ async function createMonthlyChart(){
 }
 
 async function createCategoryChart(monthFilter){
-    const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&where=${monthFilter}`);
+    const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&due_date=${monthFilter}`);
     let expenseCategorys = []
 
     if (monthExpenseCategorys.ok){
@@ -146,7 +146,7 @@ async function createCategoryChart(monthFilter){
 }   
 
 async function createPlacesChart(monthFilter){
-    const monthlyExpensePlaces = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_place&where=${monthFilter}`);
+    const monthlyExpensePlaces = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_place&due_date=${monthFilter}`);
     let expensesPlace = []
 
     if (monthlyExpensePlaces.ok){
@@ -216,7 +216,7 @@ async function updateCategoryChart(monthFilter){
         monthFilter = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`
     }
 
-    monthlyExpenseCategory = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&where=${monthFilter}`);
+    monthlyExpenseCategory = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&due_date=${monthFilter}`);
     
     if (monthlyExpenseCategory.ok){
         let expenses = await monthlyExpenseCategory.json();
@@ -242,7 +242,7 @@ async function updatePlaceChart(monthFilter){
         monthFilter = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`
     }
 
-    monthlyExpensePlaces = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_place&where=${monthFilter}`);
+    monthlyExpensePlaces = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_place&due_date=${monthFilter}`);
     
     if (monthlyExpensePlaces.ok){
         let expenses = await monthlyExpensePlaces.json();
