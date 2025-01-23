@@ -146,8 +146,9 @@ function checkDeleteBtn(event, target){
 
 function importFaturaSantander(event, target){
     let fileInput = document.getElementById('import-santander')   
-    let btnUpload = document.getElementById('btn-santander-upload')
+    let btnUpload = document.getElementsByClassName('btn-import-santander')[0]
     let spinnerLoading = document.getElementById('spinner-import-santander')
+    let lblBtnUpload = document.getElementById('txt-import-santander-label')
     let data = new FormData()
     let file = fileInput.files[0]
     let csrfToken = getCookie('csrftoken')
@@ -155,6 +156,7 @@ function importFaturaSantander(event, target){
     if (file != undefined) {
         data.append('file', fileInput.files[0])
         btnUpload.classList.add('disabled')
+        lblBtnUpload.innerText = 'Importando Fatura Santander'
         spinnerLoading.classList.remove('d-none')
 
         fetch(`http://${window.location.hostname}:${window.location.port}/import-fatura-santander/`, {
@@ -166,12 +168,11 @@ function importFaturaSantander(event, target){
             body: data})
             .then(res => {
                 if (res.ok) {
-                    return res
+                    window.location.reload()
                 }
-                throw new Error('Something went wrong, please check the file format or items.')
-            })
-            .then(res => {
-                window.location.reload()
+                else {
+                    throw new Error('Something went wrong, please check the file format or items.')
+                }
             })
             .catch(err => {
                 showAlert(err)
@@ -179,6 +180,7 @@ function importFaturaSantander(event, target){
             .finally(res => {
                 btnUpload.classList.remove('disabled')
                 spinnerLoading.classList.add('d-none')
+                lblBtnUpload.innerText = 'Importar Fatura Santander'
             })
     }
      

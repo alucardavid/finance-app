@@ -457,9 +457,8 @@ def import_fatura_santander(request):
 
             #Sort by date
             table_expenses.sort_values(by='date', inplace=True)
-
-            print(table_expenses.to_string())
-
+            
+            #Create expenses
             for item in table_expenses.iterrows():
                 expense = MonthlyExpense(
                     date = item[1]['date'],
@@ -476,8 +475,7 @@ def import_fatura_santander(request):
 
             return HttpResponse("Expenses were imported successfully.")
         except Exception as e:
-            print(e)
-            raise
+            return HttpResponseBadRequest("Wasn't possible to import expenses.")
         finally:
             os.remove(temp_file_path)
 

@@ -143,3 +143,45 @@ function checkDeleteBtn(event, target){
         payBtn.classList.add("disabled")
     }
 }
+
+function importFaturaSantander(event, target){
+    let fileInput = document.getElementById('import-santander')   
+    let btnUpload = document.getElementsByClassName('btn-import-santander')[0]
+    let spinnerLoading = document.getElementById('spinner-import-santander')
+    let lblBtnUpload = document.getElementById('txt-import-santander-label')
+    let data = new FormData()
+    let file = fileInput.files[0]
+    let csrfToken = getCookie('csrftoken')
+    
+    if (file != undefined) {
+        data.append('file', fileInput.files[0])
+        btnUpload.classList.add('disabled')
+        lblBtnUpload.innerText = 'Importando Fatura Santander'
+        spinnerLoading.classList.remove('d-none')
+
+        fetch(`http://${window.location.hostname}:${window.location.port}/import-fatura-santander/`, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "X-CSRFToken": csrfToken,
+            },
+            body: data})
+            .then(res => {
+                if (res.ok) {
+                    window.location.reload()
+                }
+                else {
+                    throw new Error('Something went wrong, please check the file format or items.')
+                }
+            })
+            .catch(err => {
+                showAlert(err)
+            })
+            .finally(res => {
+                btnUpload.classList.remove('disabled')
+                spinnerLoading.classList.add('d-none')
+                lblBtnUpload.innerText = 'Importar Fatura Santander'
+            })
+    }
+     
+}
