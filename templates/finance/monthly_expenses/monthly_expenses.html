@@ -18,12 +18,17 @@
         <div class="col-12" style="height: 50px;">
             <a class="btn btn-primary" href="{% url 'finance:new_monthly_expense' %}" role="button">Novo</a>
             <button type="button" class="btn btn-danger disabled" onclick="deleteExpenses(event, this)" id="delete-expenses">Excluir</button>
-            <button type="button" class="btn btn-info disabled" id="pay-expenses" onclick="payExpenses(event, this)">Pagar</button>
+            <button type="button" class="btn btn-info disabled" id="pay-expenses" onclick="payExpenses(event, this)">Pagar</button> 
             <button class="btn btn-secondary disabled" id="upload-csv" onclick="importExpenses(event, this)">
                 <span id="btn-upload-csv-label">Importar CSV</span>
                 <span class="spinner-border spinner-border-sm d-none" id="spinner-upload-csv" role="status" aria-hidden="true"></span>
             </button>
-            <input class="form-control" id="csv-file" type="file" style="width: auto; display: inline-block;" onchange="updateBtnUploadCsv(event, this)" >
+            <input class="form-control" id="csv-file" type="file" style="width: auto; display: inline-block;" onchange="updateBtnUploadCsv(event, this)">
+            <label for="import-santander" class="btn btn-danger" id="btn-santander-upload">
+                <span class="spinner-border spinner-border-sm d-none" id="spinner-import-santander" role="status" aria-hidden="true"></span>
+                Importar Fatura Santander
+            </label>
+            <input id="import-santander" type="file" style="display: none" onchange="importFaturaSantander(event, this)" accept=".pdf">
         </div>
     </div>
     <div class="row">

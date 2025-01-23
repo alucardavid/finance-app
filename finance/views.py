@@ -10,6 +10,11 @@ from .models import MonthlyExpense
 import sys, datetime, csv, requests
 from . import api
 from datetime import datetime, timedelta
+from tabula import read_pdf
+import os
+from setup.settings import BASE_DIR
+import pandas as pd
+import numpy as np
 
 @login_required
 def index(request):
@@ -409,3 +414,73 @@ def edit_expense_category(request, category_id):
     }
 
     return render(request, 'finance/expense_categorys/edit_expense_category.html', context)
+
+@login_required
+def import_fatura_santander(request):
+    """Get expenses from credit card bill and import o database"""
+    if request.method == "POST":
+        file_data = request.FILES['file']
+        
+        # Save the uploaded file to a temporary location
+        temp_file_path = os.path.join(f'{BASE_DIR}/setup/static/tmp', file_data.name)
+        with open(temp_file_path, 'wb') as temp_file:
+            for chunk in file_data.chunks():
+                temp_file.write(chunk)
+        try:
+            data = read_pdf(temp_file_path, pages='all', pandas_options={'header': None})
+
+             # Calculate due date
+            due_date_str = file_data.name.split('_')[0]
+            due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
+
+            #Concat all tables
+            table_expenses = pd.concat(data).dropna(how='all')
+
+            #Remove rows that are not expenses
+            table_expenses = table_expenses[table_expenses[0].str.contains('/')]
+            table_expenses = table_expenses[~table_expenses[1].str.contains('Pagamento De Fatura')]
+
+            #Create new formated columns
+            table_expenses['date'] = pd.to_datetime(table_expenses[0], dayfirst=True, format='%d/%m/%Y')
+            table_expenses['place'] = np.where(table_expenses[1].str.contains(r'.*\(.*', regex=True), table_expenses[1].str.split('(').str[0].str.strip(), table_expenses[1])
+            table_expenses['description'] = table_expenses[1]
+            table_expenses['amount'] = table_expenses[3].str.replace('R$', '').str.replace(',', '.').astype(float)
+            table_expenses['form_of_payment'] = 12
+            table_expenses['expense_category'] = 24
+            table_expenses['in_installments'] = table_expenses['place'].str.contains(r'.*\(.*\/.*\)', regex=True)
+            table_expenses['plots'] = table_expenses[1].str.extract(r'\(\d+\/(\d+)\)', expand=False).fillna(1).astype(int)
+            table_expenses['current_plot'] = table_expenses[1].str.extract(r'\((\d+)\/\d+\)', expand=False).fillna(1).astype(int)
+            table_expenses['due_date'] = due_date
+
+            #Remove columns that are not necessary
+            table_expenses.drop([0, 1, 2, 3], inplace=True, axis=1)
+
+            #Sort by date
+            table_expenses.sort_values(by='date', inplace=True)
+
+            print(table_expenses.to_string())
+
+            for item in table_expenses.iterrows():
+                expense = MonthlyExpense(
+                    date = item[1]['date'],
+                    place = item[1]['place'],
+                    description = item[1]['description'],
+                    amount = item[1]['amount'],
+                    total_plots = item[1]['plots'],
+                    current_plot = item[1]['current_plot'],
+                    due_date = item[1]['due_date'],
+                    form_of_payment_id = item[1]['form_of_payment'],
+                    expense_category_id = item[1]['expense_category']
+                )
+                api.create_monthly_expense(expense)
+
+            return HttpResponse("Expenses were imported successfully.")
+        except Exception as e:
+            print(e)
+            raise
+        finally:
+            os.remove(temp_file_path)
+
+       
+
+

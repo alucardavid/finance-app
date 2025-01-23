@@ -143,3 +143,43 @@ function checkDeleteBtn(event, target){
         payBtn.classList.add("disabled")
     }
 }
+
+function importFaturaSantander(event, target){
+    let fileInput = document.getElementById('import-santander')   
+    let btnUpload = document.getElementById('btn-santander-upload')
+    let spinnerLoading = document.getElementById('spinner-import-santander')
+    let data = new FormData()
+    let file = fileInput.files[0]
+    let csrfToken = getCookie('csrftoken')
+    
+    if (file != undefined) {
+        data.append('file', fileInput.files[0])
+        btnUpload.classList.add('disabled')
+        spinnerLoading.classList.remove('d-none')
+
+        fetch(`http://${window.location.hostname}:${window.location.port}/import-fatura-santander/`, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "X-CSRFToken": csrfToken,
+            },
+            body: data})
+            .then(res => {
+                if (res.ok) {
+                    return res
+                }
+                throw new Error('Something went wrong, please check the file format or items.')
+            })
+            .then(res => {
+                window.location.reload()
+            })
+            .catch(err => {
+                showAlert(err)
+            })
+            .finally(res => {
+                btnUpload.classList.remove('disabled')
+                spinnerLoading.classList.add('d-none')
+            })
+    }
+     
+}
