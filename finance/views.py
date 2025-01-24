@@ -15,6 +15,9 @@ import os
 from setup.settings import BASE_DIR
 import pandas as pd
 import numpy as np
+import logging
+
+logger = logging.getLogger('finance')
 
 @login_required
 def index(request):
@@ -473,8 +476,10 @@ def import_fatura_santander(request):
                 )
                 api.create_monthly_expense(expense)
 
+            logger.info("Expenses were imported successfully.")
             return HttpResponse("Expenses were imported successfully.")
         except Exception as e:
+            logger.error(f"Failed to import expenses: {e}")
             return HttpResponseBadRequest(f"Failed to import expenses: {e}")
         finally:
             os.remove(temp_file_path)
