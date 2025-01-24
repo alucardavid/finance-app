@@ -8,9 +8,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Set JAVA_HOME environment variable
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
-ENV PATH $JAVA_HOME/bin:$PATH
-ENV FINANCEENV "prd"
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
+ENV FINANCEENV="prd"
 
 # Set the working directory
 WORKDIR /app
