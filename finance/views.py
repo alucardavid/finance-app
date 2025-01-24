@@ -475,9 +475,11 @@ def import_fatura_santander(request):
 
             return HttpResponse("Expenses were imported successfully.")
         except Exception as e:
-            return HttpResponseBadRequest("Wasn't possible to import expenses.")
+            return HttpResponseBadRequest(f"Failed to import expenses: {e}")
         finally:
             os.remove(temp_file_path)
+
+    return HttpResponseBadRequest("No file was uploaded.")
 
        
 
