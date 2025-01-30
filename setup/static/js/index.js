@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     if (expenses.length == 0) {
         currentDate.setMonth(currentDate.getMonth() + 1)
-        monthFilter = `${currentDate.getFullYear()}-${(currentDate.getUTCMonth() + 1).toString().length == 1 ? '0' + (currentDate.getUTCMonth() + 1) : (currentDate.getUTCMonth() + 1) }`
+        monthFilter = `${currentDate.getFullYear()}-${(currentDate.getUTCMonth()).toString().length == 1 ? '0' + (currentDate.getUTCMonth()) : (currentDate.getUTCMonth()) }`
     }
     
     filterInput.value = monthFilter
