@@ -10,6 +10,7 @@ from .models import MonthlyExpense
 import sys, datetime, csv, requests
 from . import api
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from tabula import read_pdf
 import os
 from setup.settings import BASE_DIR
@@ -24,7 +25,7 @@ def index(request):
     """The home page for Finance App"""
     balances = api.get_all_balances()["balances"]
     total_monthly_expenses_pend = _get_monthly_expense_pend(request)
-    expenses_next_month = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+timedelta(days=30)).strftime("%Y-%m"), where="Pendente")["items"]
+    expenses_next_month = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+relativedelta(months=1)).strftime("%Y-%m"), where="Pendente")["items"]
     pending_incomings = api.get_all_incomings(1, 999,'Pendente')["items"]
 
     total_balances = round(sum(balance["value"] for balance in balances))
@@ -345,7 +346,7 @@ def _get_monthly_expense_pend(request):
     if len(monthly_expenses) > 0:
         total_pend = round(sum(expense["amount"] for expense in monthly_expenses))
     else:
-        monthly_expenses = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+timedelta(days=30)).strftime("%Y-%m"), where="Pendente")["items"]
+        monthly_expenses = api.get_all_monthly_expenses(page=1, limit=999, due_date=(datetime.today()+relativedelta(months=1)).strftime("%Y-%m"), where="Pendente")["items"]
         total_pend = round(sum(expense["amount"] for expense in monthly_expenses))
 
     return total_pend

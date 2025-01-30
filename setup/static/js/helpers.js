@@ -1,5 +1,13 @@
-const HOST_API = 'http://localhost:8001'
+let port = location.port;
+let HOST_API = ''
 
+if (port == '8000'){
+    HOST_API = 'http://localhost:7000'
+}
+else {
+    HOST_API = 'http://localhost:8001'
+}
+ 
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
