@@ -43,14 +43,16 @@ async function createMonthlyChart(){
         let expenses = await monthlyExpenses.json()
         let jsonIncomings = await incomings.json()
         let tmpBalance = sumBalances
+        let tmpTotal = 0
 
         expenses.forEach((expense, index) => {
             
-            tmpBalance -= parseInt((index > 0 ? expense.total : 0)) 
             tmpBalance += (jsonIncomings[index] != undefined ? jsonIncomings[index].total : 0)
+            tmpBalance -= parseInt((index > 0 ? tmpTotal : 0)) 
             categories.push(expense.ano_mes)
             totalExpenses.push(expense.total)
             totalBalances.push(parseInt(tmpBalance))
+            tmpTotal = expense.total
         });
 
     }
