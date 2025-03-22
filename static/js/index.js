@@ -1,14 +1,14 @@
 
 
 document.addEventListener('DOMContentLoaded', async function () {
-    const currentDate = new Date()
+    let currentDate = new Date()
     let monthFilter = getYearMonthNow()
     const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?due_date=${monthFilter}&status=Pendente&type_return=grouped_by_place`);
     let expenses = await monthlyExpenses.json()
     let filterInput = document.getElementById('month_filter')
 
     if (expenses.length == 0) {
-        currentDate.setMonth(currentDate.getMonth() + 1)
+        currentDate.setMonth(currentDate.getMonth() + 2)
         monthFilter = `${currentDate.getFullYear()}-${(currentDate.getUTCMonth()).toString().length == 1 ? '0' + (currentDate.getUTCMonth()) : (currentDate.getUTCMonth()) }`
     }
     
