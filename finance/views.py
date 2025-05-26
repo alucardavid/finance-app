@@ -448,7 +448,7 @@ def import_fatura_santander(request):
             table_expenses['date'] = pd.to_datetime(table_expenses[0], dayfirst=True, format='%d/%m/%Y')
             table_expenses['place'] = np.where(table_expenses[1].str.contains(r'.*\(.*', regex=True), table_expenses[1].str.split('(').str[0].str.strip(), table_expenses[1])
             table_expenses['description'] = table_expenses[1]
-            table_expenses['amount'] = table_expenses[3].str.replace('R$', '').str.replace(',', '.').astype(float)
+            table_expenses['amount'] = table_expenses[3].str.replace('R$', '').str.replace('.', '').str.replace(',', '.').astype(float)
             table_expenses['form_of_payment'] = 12
             table_expenses['expense_category'] = 24
             table_expenses['in_installments'] = table_expenses['place'].str.contains(r'.*\(.*\/.*\)', regex=True)
