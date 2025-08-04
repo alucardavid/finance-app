@@ -4,6 +4,8 @@ import requests
 from datetime import datetime
 import os
 
+from finance.models import Balance
+
 host = os.getenv("API_HOST")
 
 def get_all_balances():
@@ -60,9 +62,9 @@ def update_balance(new_balance, balance_id):
 
     url = f"{host}/balances/{balance_id}"
     data = {
-        'value': str(new_balance.value),
-        'show': new_balance.show,
-        'description': new_balance.description
+        'value': str(new_balance.value if type(new_balance) == Balance else new_balance['value']),
+        'show': new_balance.show if type(new_balance) == Balance else new_balance['show'],
+        'description': new_balance.description if type(new_balance) == Balance else new_balance['description'],
     }
 
     try:

@@ -5,6 +5,9 @@ from django.http import Http404
 from django.utils.formats import localize
 from django import forms
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
+from finance import open_finance_api
 from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm, IncomingForm, ExpenseCategoryForm
 from .models import MonthlyExpense
 import sys, datetime, csv, requests
@@ -88,6 +91,29 @@ def new_balance(request):
 
     context = {'form': form}
     return render(request, 'finance/balances/new_balance.html', context)
+
+@login_required
+def sync_balances(request):
+    """Sync balances with external API"""
+    balances = api.get_all_balances()["balances"]
+    for balance in balances:
+        if not balance["id_connector"] or not balance["id_account_bank"]:
+            continue
+        
+        bank_account = open_finance_api.retrieve_account(balance["id_connector"], balance["id_account_bank"])
+        if "error" in bank_account:
+            logger.error(f"Error retrieving account {balance['description']}: {bank_account['error']}")
+            messages.error(request, f"Error retrieving account {balance['description']}: {bank_account['error']}")
+            continue
+        
+        balance["value"] = bank_account["balance"]
+        balance["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        updated_balance = api.update_balance(balance, balance["id"])
+        if "error" in updated_balance:
+            logger.error(f"Error updating balance {balance['id']}: {updated_balance['error']}")
+
+
+    return redirect('finance:balances')
 
 @login_required
 def variable_expenses(request):
@@ -431,13 +457,14 @@ def import_fatura_santander(request):
             for chunk in file_data.chunks():
                 temp_file.write(chunk)
         try:
-            data = read_pdf(temp_file_path, pages='all', pandas_options={'header': None})
+            data = read_pdf(temp_file_path, pages='all', pandas_options={'header': None}, area=[0, 0, 100, 100])
 
              # Calculate due date
             due_date_str = file_data.name.split('_')[0]
             due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
 
             #Concat all tables
+            print(data)
             table_expenses = pd.concat(data).dropna(how='all')
 
             #Remove rows that are not expenses
@@ -475,8 +502,9 @@ def import_fatura_santander(request):
                     form_of_payment_id = item[1]['form_of_payment'],
                     expense_category_id = item[1]['expense_category']
                 )
-                api.create_monthly_expense(expense)
-
+                # api.create_monthly_expense(expense)
+                # print(f"Expense created: {expense.description} - {expense.amount} - {expense.date} - {expense.due_date}")
+            
             logger.info("Expenses were imported successfully.")
             return HttpResponse("Expenses were imported successfully.")
         except Exception as e:
