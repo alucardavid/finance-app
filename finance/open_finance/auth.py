@@ -1,3 +1,4 @@
+from asyncio.log import logger
 from datetime import datetime, timedelta
 import os
 from time import time
@@ -96,22 +97,3 @@ def get_token(connector_id):
         return {"error": token.get("error")}
     
     return token
-
-def retrieve_account(connector_id, id_account):
-    api_key = get_cached_api_key()
-
-    if "error" in api_key:
-        return {"error": api_key.get("error")}
-
-    response = requests.get(f"{host}/accounts/{id_account}", headers={
-        "x-api-key": api_key
-    })
-
-    if response.status_code == 200:
-        return response.json()
-    elif response.status_code == 404:
-        return {"error": "Account not found"}
-    elif response.status_code == 400:
-        return {"error": response.json()["message"]}
-    
-    return {"error": "Failed to retrieve account"}

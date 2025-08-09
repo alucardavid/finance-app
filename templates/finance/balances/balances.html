@@ -44,7 +44,7 @@
                                 <th>Saldo</th>
                                 <th>Criado em</th>
                                 <th>Atualizado em</th>
-                                <th></th>
+                                <th>Status Open Finance</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,7 +63,7 @@
                                 {% else %}
                                     <td></td>
                                 {% endif %}
-                                
+                                <td class="{% if balance.status_open_finance == 'UPDATED' %}text-success{% else %}text-danger{% endif %}">{{ balance.status_open_finance }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

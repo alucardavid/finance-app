@@ -6,8 +6,7 @@ from django.utils.formats import localize
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
-from finance import open_finance_api
+from finance.open_finance import accounts, auth
 from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm, IncomingForm, ExpenseCategoryForm
 from .models import MonthlyExpense
 import sys, datetime, csv, requests
@@ -100,7 +99,8 @@ def sync_balances(request):
         if not balance["id_connector"] or not balance["id_account_bank"]:
             continue
         
-        bank_account = open_finance_api.retrieve_account(balance["id_connector"], balance["id_account_bank"])
+        # Retrieve the account details from Open Finance API
+        bank_account, status_open_finance = accounts.retrieve_account(balance["id_account_bank"], balance["id_item"])
         if "error" in bank_account:
             logger.error(f"Error retrieving account {balance['description']}: {bank_account['error']}")
             messages.error(request, f"Error retrieving account {balance['description']}: {bank_account['error']}")
@@ -108,6 +108,7 @@ def sync_balances(request):
         
         balance["value"] = bank_account["balance"]
         balance["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        balance["status_open_finance"] = status_open_finance
         updated_balance = api.update_balance(balance, balance["id"])
         if "error" in updated_balance:
             logger.error(f"Error updating balance {balance['id']}: {updated_balance['error']}")
