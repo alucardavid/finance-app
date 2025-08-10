@@ -13,6 +13,7 @@ urlpatterns = [
     path("variable-expenses/", views.variable_expenses, name="variable_expenses"),
     path("new-variable-expense/", views.new_variable_expense, name="new_variable_expense"),
     path("edit-variable-expense/<int:variable_expense_id>/", views.edit_variable_expense, name="edit_variable_expense"),
+    path("sync-variable-expenses/", views.sync_variable_expenses, name="sync_variable_expenses"),
     path("monthly-expenses/", views.monthly_expenses, name="monthly_expenses"),
     path("new-monthly-expense/", views.new_monthly_expense, name="new_monthly_expense"),
     path("edit-monthly-balance/<int:monthly_expense_id>/", views.edit_monthly_expense, name="edit_monthly_expense"),

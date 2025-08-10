@@ -6,16 +6,17 @@ from django.utils.formats import localize
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from finance.open_finance import accounts, auth
+from finance.open_finance import accounts, auth, transactions
 from .forms import BalanceForm, VariableExpenseForm, MonthlyExpenseForm, IncomingForm, ExpenseCategoryForm
 from .models import MonthlyExpense
-import sys, datetime, csv, requests
 from . import api
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from tabula import read_pdf
-import os
 from setup.settings import BASE_DIR
+from .finance_api import variable_expenses as api_variable_expenses
+import sys, csv, requests
+import os
 import pandas as pd
 import numpy as np
 import logging
@@ -117,11 +118,47 @@ def sync_balances(request):
     return redirect('finance:balances')
 
 @login_required
+def sync_variable_expenses(request):
+    """Sync variable expenses with external API"""
+    # Retrieve all balances
+    balances = api.get_all_balances()["balances"]
+    for balance in balances:
+        if not balance["id_connector"] or not balance["id_account_bank"]:
+            continue
+
+        # Retrieve the last variable expense for the balance
+        last_variable_expense = api_variable_expenses.get_last_variable_expense_by_balance_id(balance["id"])
+        if "error" in last_variable_expense:
+            logger.error(f"Error retrieving last variable expense for balance_id {balance['id']}: {last_variable_expense['error']}")
+            continue
+
+        # Determine the from_date for the new variable expenses
+        from_date = last_variable_expense["items"][0]["date"] if last_variable_expense["items"][0]["date"] < datetime.now().strftime("%Y-%m-%d %H:%M:%S") else datetime.today().strftime("%Y-%m-%d 00:00:00")
+
+        # Retrieve new variable expenses from the transactions API
+        new_variable_expenses = transactions.list(id_account=balance["id_account_bank"], from_date=from_date, pageSize=100)
+        if "error" in new_variable_expenses:
+            logger.error(f"Error retrieving new variable expenses for balance_id {balance['id']}: {new_variable_expenses['error']}")
+            continue
+
+        # Create variable expenses for each new transaction
+        for transaction in new_variable_expenses["results"]:
+            db_variable_expense = api_variable_expenses.create_variable_expense(transaction, True, last_variable_expense["items"][0]["form_of_payment_id"], False)
+            if "error" in db_variable_expense:
+                logger.info(f"Error creating variable expense for transaction {transaction['id']}: {db_variable_expense['error']}")
+                continue
+            # Successfully created variable expense
+            logger.info(f"Variable expense created for transaction {transaction['id']}")
+            continue
+
+    return redirect('finance:variable_expenses')
+
+@login_required
 def variable_expenses(request):
     """Show all variable expenses"""
     page = int(request.GET.get('page') if request.GET.get('page') is not None else 1)
     limit = int(request.GET.get('limit') if request.GET.get('limit') is not None else 10)
-    order_by = "variable_expenses.id desc"
+    order_by = "variable_expenses.date desc"
     where = request.GET.get('where')
     variable_expenses = api.get_all_variable_expenses(page, limit, order_by, where)
     last_page = variable_expenses["total_pages"]
