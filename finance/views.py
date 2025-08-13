@@ -136,19 +136,18 @@ def sync_variable_expenses(request):
         from_date = last_variable_expense["items"][0]["date"] if last_variable_expense["items"][0]["date"] < datetime.now().strftime("%Y-%m-%d %H:%M:%S") else datetime.today().strftime("%Y-%m-%d 00:00:00")
 
         # Retrieve new variable expenses from the transactions API
-        new_variable_expenses = transactions.list(id_account=balance["id_account_bank"], from_date=from_date, pageSize=100)
+        new_variable_expenses = transactions.list(id_account=balance["id_account_bank"], id_item=balance["id_item"], from_date=from_date, pageSize=100)
         if "error" in new_variable_expenses:
             logger.error(f"Error retrieving new variable expenses for balance_id {balance['id']}: {new_variable_expenses['error']}")
             continue
 
-        # Create variable expenses for each new transaction
-        for transaction in new_variable_expenses["results"]:
-            db_variable_expense = api_variable_expenses.create_variable_expense(transaction, True, last_variable_expense["items"][0]["form_of_payment_id"], False)
-            if "error" in db_variable_expense:
-                logger.info(f"Error creating variable expense for transaction {transaction['id']}: {db_variable_expense['error']}")
-                continue
-            # Successfully created variable expense
-            logger.info(f"Variable expense created for transaction {transaction['id']}")
+        # Bulk create variable expenses
+        expenses_created = api_variable_expenses.bulk_create_variable_expenses(new_variable_expenses["results"], True, last_variable_expense["items"][0]["form_of_payment_id"], False)
+        
+        if len(expenses_created) == len(new_variable_expenses["results"]):
+            logger.info(f"Variable expenses created successfully for balance_id {balance['id']}")
+        elif "error" in expenses_created:
+            logger.error(f"Error creating variable expenses for balance_id {balance['id']}: {expenses_created['error']}")
             continue
 
     return redirect('finance:variable_expenses')

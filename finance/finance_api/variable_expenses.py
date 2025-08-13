@@ -33,7 +33,10 @@ def create_variable_expense(new_variable_expense, open_finance=False, form_of_pa
             response_data = response.json()
             return { "variable_expense": response_data}
         elif response.status_code == 409:
-            logger.error(f"Variable expense already exists: {response.json().get('error', 'Unknown error')}")
+            logger.error(f"Variable expense already exists")
+            return {"error": "Variable expense already exists"}
+        elif response.status_code == 500:
+            logger.error(f"Internal server error: {response.json().get('error', 'Unknown error')}")
             return {"error": response.json().get("error", "Unknown error")}
         else:
             logger.error(f"Error creating variable expense: {response_data.get('error', 'Unknown error')}")
@@ -42,7 +45,25 @@ def create_variable_expense(new_variable_expense, open_finance=False, form_of_pa
         db_variable_expense = {}
         return { "variable_expense": db_variable_expense, "error": str(e) }
 
+def bulk_create_variable_expenses(expenses, open_finance=False, form_of_payment_id=None, update_balance=False):
+    """Create multiple variable expenses"""
+    url = f"{host}/variable-expenses/bulk/?update_balance={update_balance}"
+    expenses_payload = [map_variable_expense(expense, open_finance=open_finance, form_of_payment_id=form_of_payment_id) for expense in expenses]
 
+    try:
+        response = requests.post(url, json=expenses_payload)
+        if response.status_code == 200:
+            logger.info(f"Variable expenses created successfully: {response.json()}")
+            return response.json()
+        elif response.status_code == 500:
+            logger.error(f"Internal server error: {response.json().get('error', 'Unknown error')}")
+            return {"error": "Unknown error"}
+        else:
+            logger.error(f"Error creating variable expenses: {response.json().get('error', 'Unknown error')}")
+            return {"error": "Unknown error"}
+    except Exception as e:
+        db_variable_expenses = []
+        return { "variable_expenses": db_variable_expenses, "error": str(e) }
 
 def map_variable_expense(data, open_finance=False, form_of_payment_id=None):
     # If it comes from Open Finance API (different field names)
@@ -53,7 +74,8 @@ def map_variable_expense(data, open_finance=False, form_of_payment_id=None):
             "date": data.get("date", ""),
             "amount": abs(data.get("amount", 0)),
             "type": data.get("type", ""),
-            "form_of_payment_id": form_of_payment_id
+            "form_of_payment_id": form_of_payment_id,
+            "id_transaction": data.get("id", "")
         }
 
     # If it comes from Django Form
@@ -64,5 +86,6 @@ def map_variable_expense(data, open_finance=False, form_of_payment_id=None):
             "date": data.date,
             "amount": data.amount,
             "type": data.type,
-            "form_of_payment_id": data.form_of_payment.id
+            "form_of_payment_id": data.form_of_payment.id,
+            "id_transaction": data.id_transaction
         }

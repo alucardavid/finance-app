@@ -1,14 +1,18 @@
 
 from asyncio.log import logger
 import requests
+from finance.open_finance import items
 from finance.open_finance.auth import get_cached_api_key, host
 
 
-def list(id_account, from_date=None, pageSize=500):
+def list(id_account, id_item, from_date=None, pageSize=500):
     """List all transactions"""
     api_key = get_cached_api_key()
     if "error" in api_key:
             return {"error": api_key.get("error")}
+
+    # Update items
+    items.update(id_item)
 
     # Retrieve the item details
     response = requests.get(f"{host}/transactions?accountId={id_account}&from={from_date}&pageSize={pageSize}", headers={

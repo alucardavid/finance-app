@@ -16,6 +16,21 @@
             <a class="btn btn-success" href="{% url 'finance:sync_variable_expenses' %}" role="button">Sincronizar</a>
         </div>
     </div>
+    {% if messages %}
+        <div id="error-alert" class="alert alert-danger" role="alert">
+            <ul class="mb-0">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <script>
+            setTimeout(function() {
+                var alert = document.getElementById('error-alert');
+                if (alert) { alert.style.display = 'none'; }
+            }, 5000);
+        </script>
+    {% endif %}
     <div class="row">
         <div class="col-sm-12 col-xs-12 col-lg-12">
             <div class="card">
