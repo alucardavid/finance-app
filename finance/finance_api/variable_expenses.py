@@ -75,7 +75,7 @@ def map_variable_expense(data, open_finance=False, form_of_payment_id=None):
             "amount": abs(data.get("amount", 0)),
             "type": data.get("type", ""),
             "form_of_payment_id": form_of_payment_id,
-            "id_transaction": data.get("id", "")
+            "id_transaction": data.get("id_transaction", "")
         }
 
     # If it comes from Django Form
