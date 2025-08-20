@@ -264,8 +264,8 @@ async function updatePlaceChart(monthFilter){
 
 function getYearMonthNow(){
     const currentDate = new Date()
-    year = currentDate.getFullYear()
-    month = currentDate.getMonth() + 1
+    let year = currentDate.getFullYear()
+    let month = currentDate.getMonth() + 1
 
     if (month < 10) {
         month = `0${month}`
