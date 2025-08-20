@@ -65,6 +65,7 @@ def update_balance(new_balance, balance_id):
         'value': str(new_balance.value if type(new_balance) == Balance else new_balance['value']),
         'show': new_balance.show if type(new_balance) == Balance else new_balance['show'],
         'description': new_balance.description if type(new_balance) == Balance else new_balance['description'],
+        'status_open_finance': new_balance.status_open_finance if type(new_balance) == Balance else new_balance['status_open_finance']
     }
 
     try:

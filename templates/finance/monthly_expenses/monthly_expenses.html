@@ -14,23 +14,48 @@
         <span class="closebtn" onclick="closeAlert()">&times;</span> 
         <span id="alerta-label"></span>
     </div>
+    <!-- Buttons -->
     <div class="row">
         <div class="col-12" style="height: 50px;">
             <a class="btn btn-primary" href="{% url 'finance:new_monthly_expense' %}" role="button">Novo</a>
             <button type="button" class="btn btn-danger disabled" onclick="deleteExpenses(event, this)" id="delete-expenses">Excluir</button>
             <button type="button" class="btn btn-info disabled" id="pay-expenses" onclick="payExpenses(event, this)">Pagar</button> 
-            <button class="btn btn-secondary disabled" id="upload-csv" onclick="importExpenses(event, this)">
+            <!-- <button class="btn btn-secondary disabled" id="upload-csv" onclick="importExpenses(event, this)">
                 <span id="btn-upload-csv-label">Importar CSV</span>
                 <span class="spinner-border spinner-border-sm d-none" id="spinner-upload-csv" role="status" aria-hidden="true"></span>
-            </button>
-            <input class="form-control" id="csv-file" type="file" style="width: auto; display: inline-block;" onchange="updateBtnUploadCsv(event, this)">
+            </button> -->
+            <!-- <input class="form-control" id="csv-file" type="file" style="width: auto; display: inline-block;" onchange="updateBtnUploadCsv(event, this)">
             <label for="import-santander" class="btn btn-danger btn-import-santander">
                 <span class="spinner-border spinner-border-sm d-none" id="spinner-import-santander" role="status" aria-hidden="true"></span>
                 <span id="txt-import-santander-label">Importar Santander</span>
-            </label>
-            <input id="import-santander" type="file" style="display: none" onchange="importFaturaSantander(event, this)" accept=".pdf">
+            </label> -->
+            <!-- <input id="import-santander" type="file" style="display: none" onchange="importFaturaSantander(event, this)" accept=".pdf"> -->
+             <form id="nubank-import-form" action="{% url 'finance:import_monthly_expenses_nubank' %}" method="post" enctype="multipart/form-data" style="display:inline;">
+                {% csrf_token %}
+                <input type="file" id="nubank-img-input" name="image_file" accept=".jpg,.jpeg,.png" style="display:none;" onchange="document.getElementById('nubank-import-form').submit();">
+                <button type="button" class="btn" style="background-color: #820ad1; color: #fff; display: inline-flex; align-items: center; border: none;" onclick="document.getElementById('nubank-img-input').click();">
+                    <img src="{% static 'img/nubank_logo.png' %}" alt="Nubank" style="height: 24px; margin-right: 8px;"> Importar Nubank
+                </button>
+            </form>
         </div>
     </div>
+
+    <!-- Alert messages -->
+    {% if messages %}
+        <div id="error-alert" class="alert alert-danger" role="alert">
+            <ul class="mb-0">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <script>
+            setTimeout(function() {
+                var alert = document.getElementById('error-alert');
+                if (alert) { alert.style.display = 'none'; }
+            }, 5000);
+        </script>
+    {% endif %}
     <div class="row">
         <div class="col-sm-12 col-xs-12 col-lg-12">
             <div class="card">

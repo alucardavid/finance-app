@@ -8,6 +8,7 @@ class Balance(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
     user_id = models.IntegerField()
     show = models.CharField(max_length=1)
+    status_open_finance = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
