@@ -14,14 +14,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     
     filterInput.value = monthFilter
 
-    createMonthlyChart()
+    createMonthlyChart(monthFilter)
     createCategoryChart(monthFilter)    
     createPlacesChart(monthFilter)
 
 });
 
-async function createMonthlyChart(){
-    const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_month`);
+async function createMonthlyChart(month_filter){
+    const monthlyExpenses = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_month&where=${month_filter}`);
     const balances = await fetch(`${HOST_API}/balances/`)
     const incomings = await fetch(`${HOST_API}/incomings?type_return=grouped_by_month`);
     let categories = []
@@ -31,7 +31,7 @@ async function createMonthlyChart(){
         
     if (balances.ok){
         let data = await balances.json()
-
+        
         data.forEach(item => {
             if (item.show === 'S') {
                 sumBalances += item.value
@@ -264,8 +264,8 @@ async function updatePlaceChart(monthFilter){
 
 function getYearMonthNow(){
     const currentDate = new Date()
-    year = currentDate.getFullYear()
-    month = currentDate.getMonth() + 1
+    let year = currentDate.getFullYear()
+    let month = currentDate.getMonth() + 1
 
     if (month < 10) {
         month = `0${month}`
