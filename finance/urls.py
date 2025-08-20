@@ -19,6 +19,7 @@ urlpatterns = [
     path("new-monthly-expense/", monthly_expenses.new_monthly_expense, name="new_monthly_expense"),
     path("edit-monthly-balance/<int:monthly_expense_id>/", monthly_expenses.edit_monthly_expense, name="edit_monthly_expense"),
     path("import-monthly-expenses/", monthly_expenses.import_monthly_expenses, name="import_monthly_expenses"),
+    path("import-monthly-expenses-nubank/", monthly_expenses.import_monthly_expenses_nubank, name="import_monthly_expenses_nubank"),
     path("incomings/", incomings.index, name="incomings"),
     path("new-incoming/", incomings.new_incoming, name="new_incoming"),
     path("edit-incoming/<int:incoming_id>/", incomings.edit_incoming, name="edit_incoming"),

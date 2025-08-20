@@ -1,12 +1,23 @@
-
+from email.mime import text
+import easyocr
 from datetime import datetime
+from PIL import Image
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from dateutil.relativedelta import relativedelta
 from finance import api
 from finance.forms import MonthlyExpenseForm
 from finance.models import MonthlyExpense
+from ..finance_api import monthly_expenses as api_monthly_expenses
+
+meses_abreviados = {
+    "JAN": "01", "FEV": "02", "MAR": "03", "ABR": "04",
+    "MAI": "05", "JUN": "06", "JUL": "07", "AGO": "08",
+    "SET": "09", "OUT": "10", "NOV": "11", "DEZ": "12"
+}
+
 
 @login_required
 def index(request):
@@ -125,3 +136,69 @@ def _get_monthly_expense_pend(request):
         total_pend = round(sum(expense["amount"] for expense in monthly_expenses))
 
     return total_pend
+
+@login_required
+async def import_monthly_expenses_nubank(request):
+    """Import expenses from Nubank img files"""
+    
+    if request.method == "POST":
+        file = request.FILES['image_file']
+
+        if file.content_type not in ['image/jpeg', 'image/png']:
+            return HttpResponseBadRequest("Invalid file type. Please upload a JPEG or PNG image.")
+
+        # Process the file and import expenses
+        # Open the image file
+        reader = easyocr.Reader(['pt'])
+        img = Image.open(file)
+
+        # Perform OCR on the image
+        results = reader.readtext(img)
+
+        expenses = []
+        i = 0
+
+        # Loop through the OCR results
+        while i < len(results):
+            if i + 2 < len(results):
+                data_str = results[i][1] if len(results[i][1]) > 1 else results[i+1][1]
+                descricao = results[i+1][1] if len(results[i][1]) > 1 else results[i+2][1]
+                valor_str = results[i+2][1] if any(x in results[i+2][1] for x in ["RS", "R$"]) else results[i+3][1]
+                dia = data_str.split()[0]
+                mes = meses_abreviados.get(data_str.split()[1])
+
+                # Convert valor_str to float and remove currency symbols
+                valor = float(valor_str.replace('RS', '').replace('R$', '').replace('.', '').replace(',', '.').replace('~', '-').replace(' ', '').strip())
+
+                # Create the expense dictionary
+                expense = {
+                    "date": f"{datetime.now().year}-{mes}-{dia}",
+                    "amount": valor,
+                    "description": descricao,
+                    "place": descricao,
+                    "total_plots": 1,
+                    "current_plot": 1,
+                    "form_of_payment_id": 14,
+                    "expense_category_id": 24,
+                    "due_date": f"{datetime.now().year}-{(str(int(mes) + 1)).zfill(2) if int(mes) + 1 < 13 else "01"}-{"01"}"
+                }
+                expenses.append(expense)
+
+                # Dynamic jump:
+                if any(x in results[i+2][1] for x in ["RS", "R$"]):
+                    i += 3
+                else:
+                    i += 4
+
+        # Create the expenses in bulk
+        if expenses:
+            expenses_created = api_monthly_expenses.bulk_create_monthly_expenses(expenses)
+
+        # Check for errors
+        if "error" in expenses_created:
+            messages.error(request, f"Error creating monthly expenses: {expenses_created['error']}")
+        else:
+            messages.success(request, "Monthly expenses imported successfully.")
+
+    return redirect('finance:monthly_expenses')
+
