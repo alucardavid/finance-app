@@ -23,34 +23,18 @@
             </form>
         </div>
     </div>
-    {% if messages.error %}
-        <div id="alert-error" class="alert alert-danger" role="alert">
-            <ul class="mb-0">
-                {% for message in messages.error %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <script>
-            setTimeout(function() {
-                var alert = document.getElementById('alert-error');
-                if (alert) { alert.style.display = 'none'; }
-            }, 5000);
-        </script>
-    {% elif messages.success %}
-        <div id="alert-success" class="alert alert-success" role="alert">
-            <ul class="mb-0">
-                {% for message in messages.success %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <script>
-            setTimeout(function() {
-                var alert = document.getElementById('alert-success');
-                if (alert) { alert.style.display = 'none'; }
-            }, 5000);
-        </script>
+    {% if messages %}
+        {% for message in messages %}
+            <div id="alert-{{ message.tags }}" class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+            <script>
+                setTimeout(function() {
+                    var alert = document.getElementById('alert-{{ message.tags }}');
+                    if (alert) { alert.style.display = 'none'; }
+                }, 5000);
+            </script>
+        {% endfor %}
     {% endif %}
     <div class="row">
         <div class="col-sm-12 col-xs-12 col-lg-12">
