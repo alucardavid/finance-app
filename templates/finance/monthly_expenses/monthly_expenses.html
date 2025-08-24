@@ -42,19 +42,17 @@
 
     <!-- Alert messages -->
     {% if messages %}
-        <div id="error-alert" class="alert alert-danger" role="alert">
-            <ul class="mb-0">
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <script>
-            setTimeout(function() {
-                var alert = document.getElementById('error-alert');
-                if (alert) { alert.style.display = 'none'; }
-            }, 5000);
-        </script>
+        {% for message in messages %}
+            <div id="alert-{{ message.tags }}" class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+            <script>
+                setTimeout(function() {
+                    var alert = document.getElementById('alert-{{ message.tags }}');
+                    if (alert) { alert.style.display = 'none'; }
+                }, 5000);
+            </script>
+        {% endfor %}
     {% endif %}
     <div class="row">
         <div class="col-sm-12 col-xs-12 col-lg-12">
