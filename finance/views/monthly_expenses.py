@@ -161,18 +161,14 @@ async def import_monthly_expenses_nubank(request):
         # Loop through the OCR results
         while i < len(results):
             if i + 2 < len(results):
-                data_str = results[i][1] if len(results[i][1]) > 1 else results[i+1][1]
-                descricao = results[i+1][1] if len(results[i][1]) > 1 else results[i+2][1]
-                valor_str = results[i+2][1] if any(x in results[i+2][1] for x in ["RS", "R$"]) else results[i+3][1]
-                dia = data_str.split()[0]
-                mes = meses_abreviados.get(data_str.split()[1])
-
-                # Convert valor_str to float and remove currency symbols
-                valor = float(valor_str.replace('RS', '').replace('R$', '').replace('.', '').replace(',', '.').replace('~', '-').replace(' ', '').strip())
+                date, i = _get_date_from_nubank_ocr(results, i)
+                descricao, i = _get_description_from_nubank_ocr(results, i)
+                valor, i = _get_amount_from_nubank_ocr(results, i)
+                mes = date.split("-")[1]
 
                 # Create the expense dictionary
                 expense = {
-                    "date": f"{datetime.now().year}-{mes}-{dia}",
+                    "date": date,
                     "amount": valor,
                     "description": descricao,
                     "place": descricao,
@@ -183,13 +179,7 @@ async def import_monthly_expenses_nubank(request):
                     "due_date": f"{datetime.now().year}-{(str(int(mes) + 1)).zfill(2) if int(mes) + 1 < 13 else '01'}-{'01'}"
                 }
                 expenses.append(expense)
-
-                # Dynamic jump:
-                if any(x in results[i+2][1] for x in ["RS", "R$"]):
-                    i += 3
-                else:
-                    i += 4
-
+    
         # Create the expenses in bulk
         if expenses:
             expenses_created = api_monthly_expenses.bulk_create_monthly_expenses(expenses)
@@ -197,8 +187,44 @@ async def import_monthly_expenses_nubank(request):
         # Check for errors
         if "error" in expenses_created:
             messages.error(request, f"Error creating monthly expenses: {expenses_created['error']}")
+        elif expenses_created.status_code in [404, 400, 422]:
+            messages.error(request, f"Error creating monthly expenses: {expenses_created.reason}")
+            print(expenses_created.text)
         else:
-            messages.success(request, "Monthly expenses imported successfully.")
+            messages.success(request, f"{len(expenses)} Monthly expenses imported successfully.")
 
     return redirect('finance:monthly_expenses')
 
+def _get_description_from_nubank_ocr(results, index):
+    """Extract description from OCR results"""
+    description = ""
+    for index in range(index, len(results)):
+        if any(x in results[index+1][1] for x in ["RS", "R$"]):
+            description += results[index][1]
+            break
+
+        description += results[index][1] + " "
+
+    return (description.strip(), index + 1)
+
+def _get_amount_from_nubank_ocr(results, index):
+    """Extract amount from OCR results"""
+    amount_str = ""
+    for index in range(index, len(results)):
+        if any(x in results[index][1] for x in ["RS", "R$"]):
+            amount_str = results[index][1]
+            break
+
+    amount = float(amount_str.replace('RS', '').replace('R$', '').replace('.', '').replace(',', '.').replace('~', '-').replace(' ', '').strip())
+    return (amount, index + 1)
+
+def _get_date_from_nubank_ocr(results, index):
+    """Extract date from OCR results"""
+    date_str = results[index][1]
+    for index in range(index, len(results)):
+        if any(x in results[index][1] for x in meses_abreviados.keys()):
+            date_str = results[index][1]
+            break
+    dia = (date_str.split()[0] if " " in date_str else date_str[:2]).replace('O', '0').zfill(2)
+    mes = meses_abreviados.get(date_str.split()[1] if " " in date_str else date_str[2:5].strip())
+    return (f"{datetime.now().year}-{mes}-{dia}", index + 1)
