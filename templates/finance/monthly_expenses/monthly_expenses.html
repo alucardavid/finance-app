@@ -39,11 +39,10 @@
             </form>
         </div>
     </div>
-
     <!-- Alert messages -->
     {% if messages %}
         {% for message in messages %}
-            <div id="alert-{{ message.tags }}" class="alert alert-{{ message.tags }}" role="alert">
+            <div id="alert-{{ message.tags }}" class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}" role="alert">
                 {{ message }}
             </div>
             <script>
