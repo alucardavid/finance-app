@@ -32,7 +32,7 @@
             <!-- <input id="import-santander" type="file" style="display: none" onchange="importFaturaSantander(event, this)" accept=".pdf"> -->
              <form id="nubank-import-form" action="{% url 'finance:import_monthly_expenses_nubank' %}" method="post" enctype="multipart/form-data" style="display:inline;">
                 {% csrf_token %}
-                <input type="file" id="nubank-img-input" name="image_file" accept=".jpg,.jpeg,.png" style="display:none;" onchange="document.getElementById('nubank-import-form').submit();">
+                <input type="file" id="nubank-img-input" name="csv_file" accept=".csv" style="display:none;" onchange="document.getElementById('nubank-import-form').submit();">
                 <button type="button" class="btn" style="background-color: #820ad1; color: #fff; display: inline-flex; align-items: center; border: none;" onclick="document.getElementById('nubank-img-input').click();">
                     <img src="{% static 'img/nubank_logo.png' %}" alt="Nubank" style="height: 24px; margin-right: 8px;"> Importar Nubank
                 </button>

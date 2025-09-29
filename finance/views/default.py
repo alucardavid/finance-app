@@ -11,7 +11,7 @@ from finance import api
 from finance.models import MonthlyExpense
 from finance.views.monthly_expenses import _get_monthly_expense_pend
 from setup.settings import BASE_DIR
-from tabula import read_pdf
+
 
 logger = logging.getLogger('finance')
 
