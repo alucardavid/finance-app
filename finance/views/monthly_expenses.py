@@ -1,7 +1,6 @@
-from email.mime import text
-import easyocr
+import csv
+import io
 from datetime import datetime
-from PIL import Image
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -138,40 +137,33 @@ def _get_monthly_expense_pend(request):
     return total_pend
 
 @login_required
-async def import_monthly_expenses_nubank(request):
+def import_monthly_expenses_nubank(request):
     """Import expenses from Nubank img files"""
     
     if request.method == "POST":
-        file = request.FILES['image_file']
+        file = request.FILES['csv_file']
 
-        if file.content_type not in ['image/jpeg', 'image/png']:
-            return HttpResponseBadRequest("Invalid file type. Please upload a JPEG or PNG image.")
+        if not file.name.endswith('.csv'):
+            messages.error(request, 'This is not a CSV file')
+            return redirect('finance:monthly_expenses')
 
-        # Process the file and import expenses
-        # Open the image file
-        reader = easyocr.Reader(['pt'])
-        img = Image.open(file)
-
-        # Perform OCR on the image
-        results = reader.readtext(img)
-
-        expenses = []
-        i = 0
-
-        # Loop through the OCR results
-        while i < len(results):
-            if i + 2 < len(results):
-                date, i = _get_date_from_nubank_ocr(results, i)
-                descricao, i = _get_description_from_nubank_ocr(results, i)
-                valor, i = _get_amount_from_nubank_ocr(results, i)
-                mes = date.split("-")[1]
-
-                # Create the expense dictionary
+        try:
+            decoded_file = file.read().decode('utf-8')
+            io_string = io.StringIO(decoded_file)
+            reader = csv.reader(io_string, delimiter=';')
+            next(reader, None) # Skip the header
+            expenses = []
+            for row in reader:
+                date = _get_date_from_nubank_csv(row[0])
+                description = row[1]
+                amount = _get_amount_from_nubank_csv(row[2])
+                mes = date.split('-')[1]
+                
                 expense = {
                     "date": date,
-                    "amount": valor,
-                    "description": descricao,
-                    "place": descricao,
+                    "amount": amount,
+                    "description": description,
+                    "place": description,
                     "total_plots": 1,
                     "current_plot": 1,
                     "form_of_payment_id": 14,
@@ -179,7 +171,10 @@ async def import_monthly_expenses_nubank(request):
                     "due_date": f"{datetime.now().year}-{(str(int(mes) + 1)).zfill(2) if int(mes) + 1 < 13 else '01'}-{'01'}"
                 }
                 expenses.append(expense)
-    
+
+        except Exception as e:
+            return HttpResponseBadRequest(f"Error processing CSV: {str(e)}")
+
         # Create the expenses in bulk
         if expenses:
             expenses_created = api_monthly_expenses.bulk_create_monthly_expenses(expenses)
@@ -195,36 +190,15 @@ async def import_monthly_expenses_nubank(request):
 
     return redirect('finance:monthly_expenses')
 
-def _get_description_from_nubank_ocr(results, index):
-    """Extract description from OCR results"""
-    description = ""
-    for index in range(index, len(results)):
-        if any(x in results[index+1][1] for x in ["RS", "R$"]):
-            description += results[index][1]
-            break
+def _get_amount_from_nubank_csv(amount):
+    """Extract amount from CSV results"""
+    amount = float(amount.replace('RS', '').replace('R$', '').replace('.', '').replace(',', '.').replace('~', '-').replace(' ', '').strip())
+    return amount
 
-        description += results[index][1] + " "
+def _get_date_from_nubank_csv(date):
+    """Extract date from CSV results"""
+    dia = date.split(' ')[0]
+    mes = meses_abreviados.get(date.split(' ')[1])
 
-    return (description.strip(), index + 1)
-
-def _get_amount_from_nubank_ocr(results, index):
-    """Extract amount from OCR results"""
-    amount_str = ""
-    for index in range(index, len(results)):
-        if any(x in results[index][1] for x in ["RS", "R$"]):
-            amount_str = results[index][1]
-            break
-
-    amount = float(amount_str.replace('RS', '').replace('R$', '').replace('.', '').replace(',', '.').replace('~', '-').replace(' ', '').strip())
-    return (amount, index + 1)
-
-def _get_date_from_nubank_ocr(results, index):
-    """Extract date from OCR results"""
-    date_str = results[index][1]
-    for index in range(index, len(results)):
-        if any(x in results[index][1] for x in meses_abreviados.keys()):
-            date_str = results[index][1]
-            break
-    dia = (date_str.split()[0] if " " in date_str else date_str[:2]).replace('O', '0').zfill(2)
-    mes = meses_abreviados.get(date_str.split()[1] if " " in date_str else date_str[2:5].strip())
-    return (f"{datetime.now().year}-{mes}-{dia}", index + 1)
+    return f"{datetime.now().year}-{mes}-{dia}"
+    
