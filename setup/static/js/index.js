@@ -8,8 +8,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     let filterInput = document.getElementById('month_filter')
 
     if (expenses.length == 0) {
-        currentDate.setMonth(currentDate.getMonth() + 2)
-        monthFilter = `${currentDate.getFullYear()}-${(currentDate.getUTCMonth()).toString().length == 1 ? '0' + (currentDate.getUTCMonth()) : (currentDate.getUTCMonth()) }`
+        currentDate.setMonth(currentDate.getMonth() + 1)
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+        monthFilter = `${currentDate.getFullYear()}-${month}`
     }
     
     filterInput.value = monthFilter
@@ -31,7 +32,6 @@ async function createMonthlyChart(month_filter){
         
     if (balances.ok){
         let data = await balances.json()
-        
         data.forEach(item => {
             if (item.show === 'S') {
                 sumBalances += item.value
@@ -44,7 +44,9 @@ async function createMonthlyChart(month_filter){
         let jsonIncomings = await incomings.json()
         let tmpBalance = sumBalances
         let tmpTotal = 0
-
+        console.log('Initial Balance:', tmpBalance)
+        console.log('Incomings:', jsonIncomings)
+        console.log('Expenses:', expenses)
         expenses.forEach((expense, index) => {
             
             tmpBalance += (jsonIncomings[index] != undefined ? jsonIncomings[index].total : 0)
@@ -96,10 +98,8 @@ async function createMonthlyChart(month_filter){
 async function createCategoryChart(monthFilter){
     const monthExpenseCategorys = await fetch(`${HOST_API}/monthly-expenses?type_return=grouped_by_category&due_date=${monthFilter}`);
     let expenseCategorys = []
-
     if (monthExpenseCategorys.ok){
         let expenses = await monthExpenseCategorys.json();
-
         expenses.forEach((expense) => {
             expenseCategorys.push({
                 "name": expense.category,
