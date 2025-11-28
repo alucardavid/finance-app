@@ -150,13 +150,13 @@ def import_monthly_expenses_nubank(request):
         try:
             decoded_file = file.read().decode('utf-8')
             io_string = io.StringIO(decoded_file)
-            reader = csv.reader(io_string, delimiter=';')
+            reader = csv.reader(io_string, delimiter=',')
             next(reader, None) # Skip the header
             expenses = []
             for row in reader:
-                date = _get_date_from_nubank_csv(row[0])
+                date = row[0]
                 description = row[1]
-                amount = _get_amount_from_nubank_csv(row[2])
+                amount = row[2]
                 mes = date.split('-')[1]
                 
                 expense = {
