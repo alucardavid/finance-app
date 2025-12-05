@@ -158,6 +158,9 @@ def import_monthly_expenses_nubank(request):
                 description = row[1]
                 amount = row[2]
                 mes = date.split('-')[1]
+                dateParsed = datetime.strptime(date, "%Y-%m-%d").date()
+                next_month = dateParsed + relativedelta(months=1)
+                due_date = f"{next_month.year}-{next_month.month:02d}-08"
                 
                 expense = {
                     "date": date,
@@ -168,7 +171,7 @@ def import_monthly_expenses_nubank(request):
                     "current_plot": 1,
                     "form_of_payment_id": 14,
                     "expense_category_id": 24,
-                    "due_date": f"{datetime.now().year}-{(str(int(mes) + 1)).zfill(2) if int(mes) + 1 < 13 else '01'}-{'01'}"
+                    "due_date": due_date
                 }
                 expenses.append(expense)
 
